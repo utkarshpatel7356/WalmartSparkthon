@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+
+{% block title %}Product - Walmart Sparkathon{% endblock %}
+{% block header %}🔄 Sustainability Analyzer{% endblock %}
+
+{% block content %}
+<style>
+  * { font-family: 'Inter', sans-serif; }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  .hero-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  }
+  .card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  }
+  .glass-effect {
+    backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Score rings */
+  .score-ring {
+    background: conic-gradient(
+      from 0deg,
+      #10b981 0deg,
+      #10b981 calc(var(--score) * 3.6deg),
+      #e5e7eb calc(var(--score) * 3.6deg),
+      #e5e7eb 360deg
+    );
+  }
+  .score-ring-medium {
+    background: conic-gradient(
+      from 0deg,
+      #f59e0b 0deg,
+      #f59e0b calc(var(--score) * 3.6deg),
+      #e5e7eb calc(var(--score) * 3.6deg),
+      #e5e7eb 360deg
+    );
+  }
+  .score-ring-low {
+    background: conic-gradient(
+      from 0deg,
+      #ef4444 0deg,
+      #ef4444 calc(var(--score) * 3.6deg),
+      #e5e7eb calc(var(--score) * 3.6deg),
+      #e5e7eb 360deg
+    );
+  }
+
+  /* Animations */
+  .floating-element { animation: float 6s ease-in-out infinite; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+  }
+  @keyframes pulse-glow {
+    from { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+    to   { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.5) 50%,
+      transparent 70%
+    );
+    animation: shimmer 3s infinite;
+  }
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: 0.3s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    transition: 0.3s;
+  }
+  .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+  }
+
+  /* Podium hover */
+  .podium-item:hover {
+    transform: scale(1.05);
+  }
+
+  .input-focus:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .section-fade-in {
+    animation: fadeInUp 0.8s ease-out;
+  }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .status-badge {
+    position: relative;
+    overflow: hidden;
+  }
+  .status-badge::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s ease;
+  }
+  .status-badge:hover::before {
+    left: 100%;
+  }
+</style>
+
+<main class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-blue-600 rounded-3xl p-8 mb-8 shadow-2xl">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="relative z-10 text-center">
+      <div class="inline-flex items-center bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-sm mb-4">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0
+                   a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        Product Tracker
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+        Product <span class="text-yellow-400">Sustainability</span> Analyzer
+      </h1>
+      <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+        Discover sustainable products and make eco-conscious choices for a better tomorrow
+      </p>
+    </div>
+    <div class="absolute top-4 right-4 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl"></div>
+    <div class="absolute bottom-4 left-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+  </header>
+
+  <div class="container mx-auto px-6 py-8">
+    <!-- Leaderboard -->
+    <section class="section-fade-in mb-12">
+      <div class="bg-white rounded-2xl shadow-xl p-8 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full opacity-10 transform translate-x-16 -translate-y-16"></div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+          <span class="text-4xl mr-3">🏆</span> Sustainability Champions
+        </h2>
+        <div id="leaderboard-content" class="flex justify-center items-end space-x-8">
+          <div class="text-center text-gray-500">
+            <div class="text-6xl mb-4">🎯</div>
+            <p class="text-lg">Start searching to see the leaderboard!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search -->
+    <section class="section-fade-in mb-12">
+      <div class="bg-white rounded-2xl shadow-xl p-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Find Your Perfect Product</h2>
+
+        <div class="max-w-md mx-auto mb-8">
+          <label for="userName" class="block text-gray-700 text-sm font-semibold mb-3">👤 Your Name</label>
+          <input id="userName" type="text" required
+                 class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:outline-none input-focus transition-all duration-300"
+                 placeholder="Enter your name to get started"/>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <!-- Text Search -->
+          <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 border-2 border-blue-100 hover:border-blue-200 transition-all duration-300">
+            <div class="text-center mb-6">
+              <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                📝
+              </div>
+              <h3 class="text-xl font-bold text-gray-800">Search by Name</h3>
+              <p class="text-gray-600 mt-2">Enter any product name to find sustainable alternatives</p>
+            </div>
+            <input id="productName" type="text"
+                   class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:outline-none input-focus mb-4 transition-all duration-300"
+                   placeholder="e.g., wireless headphones, yoga mat, coffee maker"/>
+            <button id="searchTextBtn" onclick="searchProducts('text')"
+                    class="w-full btn-primary text-white font-semibold py-4 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+              🔍 Search Products
+            </button>
+          </div>
+
+          <!-- Image Search -->
+          <div class="bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl p-6 border-2 border-green-100 hover:border-green-200 transition-all duration-300">
+            <div class="text-center mb-6">
+              <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                📸
+              </div>
+              <h3 class="text-xl font-bold text-gray-800">Search by Image</h3>
+              <p class="text-gray-600 mt-2">Upload a photo to find similar sustainable products</p>
+            </div>
+            <input id="productImage" type="file" accept="image/*"
+                   class="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:outline-none input-focus mb-4 transition-all duration-300 file:rounded-lg file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"/>
+            <button id="searchImageBtn" onclick="searchProducts('image')"
+                    class="w-full btn-secondary text-white font-semibold py-4 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+              📸 Search by Image
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <div id="loading" class="hidden section-fade-in">
+      <div class="bg-white rounded-2xl shadow-xl p-12 text-center">
+        <div class="pulse-glow rounded-full h-20 w-20 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mb-6 flex items-center justify-center">
+          <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Analyzing Products</h3>
+        <p class="text-gray-600">Searching for sustainable options and calculating environmental impact...</p>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="hidden section-fade-in">
+      <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Search Results</h2>
+        <p class="text-gray-600 text-lg text-center">
+          Found products for <span id="searchQuery" class="font-semibold text-purple-600"></span>
+        </p>
+        <p id="totalResults" class="text-gray-500 text-sm text-center mt-2"></p>
+      </div>
+      <div id="productCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+      <div class="text-center mt-12">
+        <button onclick="resetSearch()"
+                class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 hover:scale-105">
+          🔄 Search Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-xl shadow-lg z-50 max-w-md">
+      <div class="flex items-center">
+        <span class="text-2xl mr-3">✅</span>
+        <div>
+          <p class="font-semibold">Success!</p>
+          <p id="successText" class="text-sm"></p>
+        </div>
+      </div>
+    </div>
+    <div id="errorMessage" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-xl shadow-lg z-50 max-w-md">
+      <div class="flex items-center">
+        <span class="text-2xl mr-3">❌</span>
+        <div>
+          <p class="font-semibold">Error</p>
+          <p id="errorText" class="text-sm"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    let currentProducts = [], userName = '', isSearching = false;
+
+    function showLoading() {
+      document.getElementById('loading').classList.remove('hidden');
+      document.getElementById('results').classList.add('hidden');
+      document.getElementById('successMessage').classList.add('hidden');
+      document.getElementById('errorMessage').classList.add('hidden');
+      document.getElementById('searchTextBtn').disabled = true;
+      document.getElementById('searchImageBtn').disabled = true;
+      isSearching = true;
+    }
+    function hideLoading() {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('searchTextBtn').disabled = false;
+      document.getElementById('searchImageBtn').disabled = false;
+      isSearching = false;
+    }
+    function showSuccess(msg) {
+      document.getElementById('successText').textContent = msg;
+      document.getElementById('successMessage').classList.remove('hidden');
+      setTimeout(() => document.getElementById('successMessage').classList.add('hidden'), 5000);
+    }
+    function showError(msg) {
+      document.getElementById('errorText').textContent = msg;
+      document.getElementById('errorMessage').classList.remove('hidden');
+      setTimeout(() => document.getElementById('errorMessage').classList.add('hidden'), 5000);
+    }
+    function getScoreColor(score) {
+      return score >= 70 ? 'score-ring' : score >= 40 ? 'score-ring-medium' : 'score-ring-low';
+    }
+    function getScoreTextColor(score) {
+      return score >= 70 ? 'text-green-600' : score >= 40 ? 'text-yellow-600' : 'text-red-600';
+    }
+    function getScoreBadge(score) {
+      if (score >= 80) return { text: 'Excellent', color: 'bg-green-500', icon: '🌟' };
+      if (score >= 60) return { text: 'Good', color: 'bg-blue-500', icon: '👍' };
+      if (score >= 40) return { text: 'Fair', color: 'bg-yellow-500', icon: '⚠️' };
+      return { text: 'Poor', color: 'bg-red-500', icon: '❌' };
+    }
+
+    function createProductCard(p) {
+      const stock = p.in_stock
+        ? '<span class="status-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">✅ In Stock</span>'
+        : '<span class="status-badge bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">❌ Out of Stock</span>';
+      const rating = p.rating
+        ? `<div class="flex items-center justify-center text-sm text-gray-600 mb-2">
+             <span class="text-yellow-400 mr-1">⭐</span>${p.rating}
+             <span class="text-gray-400 ml-1">(${p.total_reviews})</span>
+           </div>`
+        : '';
+      const badge = getScoreBadge(p.sustainability_score);
+      return `
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl border border-gray-100 overflow-hidden card-hover">
+          <div class="relative">
+            <img src="${p.image_url}" alt="${p.name}" class="w-full h-56 object-cover"
+                 onerror="this.src='https://via.placeholder.com/400x300?text=No+Image+Available'">
+            <div class="absolute top-4 right-4">${stock}</div>
+            <div class="absolute top-4 left-4">
+              <span class="${badge.color} text-white px-2 py-1 rounded-full text-xs font-semibold">
+                ${badge.icon} ${badge.text}
+              </span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-3 line-clamp-2 min-h-[3.5rem]">${p.name}</h3>
+            <div class="flex justify-between items-center mb-4">
+              <div class="text-3xl font-bold text-purple-600">${p.currency_symbol}${p.price}</div>
+              <div>${rating}</div>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4 mb-4">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-sm font-semibold text-gray-700">Sustainability Score</span>
+                <div class="w-12 h-12 rounded-full ${getScoreColor(p.sustainability_score)} flex items-center justify-center" style="--score: ${p.sustainability_score}">
+                  <div class="bg-white rounded-full w-8 h-8 flex items-center justify-center">
+                    <span class="text-sm font-bold ${getScoreTextColor(p.sustainability_score)}">${p.sustainability_score}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <div class="flex items-center text-sm text-gray-600">
+                  🔥 <span class="text-xs ml-1">${p.carbon_footprint}</span>
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                  💧 <span class="text-xs ml-1">${p.water_usage}</span>
+                </div>
+              </div>
+            </div>
+            <p class="text-gray-600 text-sm mb-6 line-clamp-3">${p.sustainability_summary}</p>
+            <button onclick="selectProduct('${p.id}','${p.name.replace(/'/g, "\\'")}',${p.sustainability_score},'${p.carbon_footprint}','${p.water_usage}',${p.price})"
+                    class="w-full ${p.in_stock ? 'btn-primary hover:shadow-lg' : 'bg-gray-400 cursor-not-allowed'} text-white font-semibold py-3 rounded-xl transition-all duration-300"
+                    ${!p.in_stock ? 'disabled' : ''}>
+              ${p.in_stock ? '🛒 Select This Product' : '❌ Out of Stock'}
+            </button>
+          </div>
+        </div>`;
+    }
+
+    function createPodiumItem(user, pos) {
+      const cfg = {
+        1: { bg: 'bg-gradient-to-t from-gray-400 to-gray-300', text: 'text-gray-800', crown: '🥈', h: 'h-24' },
+        2: { bg: 'bg-gradient-to-t from-yellow-400 to-yellow-300', text: 'text-yellow-800', crown: '👑', h: 'h-32' },
+        3: { bg: 'bg-gradient-to-t from-orange-400 to-orange-300', text: 'text-orange-800', crown: '🥉', h: 'h-20' }
+      }[pos];
+      return `
+        <div class="flex flex-col items-center podium-item">
+          <div class="mb-4 text-center">
+            <div class="text-2xl mb-2">${cfg.crown}</div>
+            <div class="text-lg font-bold text-gray-800">${user.name}</div>
+            <div class="text-sm text-gray-600">${user.count} products</div>
+          </div>
+          <div class="${cfg.bg} ${cfg.h} w-20 rounded-t-lg flex items-end justify-center pb-2">
+            <div class="text-xl font-bold ${cfg.text}">${user.score}</div>
+            <div class="text-xs ${cfg.text}">points</div>
+          </div>
+          <div class="bg-gray-200 w-20 h-4 rounded-b-lg"></div>
+        </div>`;
+    }
+
+    function updateLeaderboard(lb) {
+      const container = document.getElementById('leaderboard-content');
+      if (!lb || lb.length === 0) {
+        container.innerHTML = `
+          <div class="text-center text-gray-500">
+            <div class="text-6xl mb-4">🎯</div>
+            <p class="text-lg">Start searching to see the leaderboard!</p>
+          </div>`;
+        return;
+      }
+      container.innerHTML = `
+        <div class="flex justify-center items-end space-x-8">
+          ${lb.slice(0,3).map((u,i) => createPodiumItem(u,i+1)).join('')}
+        </div>`;
+    }
+
+    async function searchProducts(type) {
+      if (isSearching) return;
+      userName = document.getElementById('userName').value.trim();
+      if (!userName) return showError('Please enter your name first');
+
+      const formData = new FormData();
+      if (type === 'text') {
+        const name = document.getElementById('productName').value.trim();
+        if (!name) return showError('Please enter a product name');
+        formData.append('product_name', name);
+      } else {
+        const file = document.getElementById('productImage').files[0];
+        if (!file) return showError('Please select an image');
+        formData.append('product_image', file);
+      }
+
+      showLoading();
+      try {
+        const res = await fetch('/api/search-products', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!data.success) return showError('Error searching products: ' + (data.detail || 'Unknown error'));
+
+        currentProducts = data.products;
+        displayResults(data);
+      } catch (e) {
+        showError('Network error: ' + e.message);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function displayResults(data) {
+      document.getElementById('searchQuery').textContent = data.search_query;
+      document.getElementById('totalResults').textContent = `Found ${data.total_results} sustainable options`;
+      const container = document.getElementById('productCards');
+      container.innerHTML = data.products.map(createProductCard).join('');
+      document.getElementById('results').classList.remove('hidden');
+    }
+
+    async function selectProduct(id, name, score, carbon, water, price) {
+      if (!userName) return showError('User name is missing');
+      const fd = new FormData();
+      fd.append('user_name', userName);
+      fd.append('product_id', id);
+      fd.append('product_name', name);
+      fd.append('sustainability_score', score);
+      fd.append('carbon_footprint', carbon);
+      fd.append('water_usage', water);
+      fd.append('price', price);
+
+      try {
+        const res = await fetch('/api/select-product', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (!data.success) return showError('Error selecting product: ' + (data.detail || 'Unknown error'));
+        showSuccess(`${data.message} You earned ${data.new_score} points! 🎉`);
+        updateLeaderboard(data.leaderboard);
+      } catch (e) {
+        showError('Network error: ' + e.message);
+      }
+    }
+
+    function resetSearch() {
+      document.getElementById('results').classList.add('hidden');
+      document.getElementById('productName').value = '';
+      document.getElementById('productImage').value = '';
+      currentProducts = [];
+    }
+  </script>
+</main>
+{% endblock %}

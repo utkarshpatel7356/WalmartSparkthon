@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Effective Demand Predictor - TabTransformer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <div class="max-w-5xl mx-auto p-6">
+    <header class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-blue-800">🚀 Effective Demand Predictor</h1>
+      <p class="text-gray-600">Powered by TabTransformer Neural Network</p>
+    </header>
+
+    <!-- Form Section -->
+    <section class="bg-white rounded-lg shadow p-6 mb-8">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">📊 Input Parameters</h2>
+      <form method="post" action="/trnf/predict" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Location -->
+        <div>
+          <label class="block mb-1 font-medium" for="location">🏙️ Location</label>
+          <select id="location" name="location" required class="w-full p-2 border rounded">
+            <option value="">Select Location</option>
+            {% if valid_values.location %}
+              {% for value in valid_values.location %}
+              <option value="{{ value }}" {% if input_data and input_data.location == value %}selected{% endif %}>{{ value }}</option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+
+        <!-- Stock Level -->
+        <div>
+          <label class="block mb-1 font-medium" for="stock_level">📦 Stock Level</label>
+          <input type="number" id="stock_level" name="stock_level" min="0" step="1" required value="{% if input_data %}{{ input_data.stock_level }}{% endif %}" class="w-full p-2 border rounded" placeholder="e.g., 200"/>
+        </div>
+
+        <!-- Competitor Price -->
+        <div>
+          <label class="block mb-1 font-medium" for="competitor_price">💰 Competitor Price</label>
+          <input type="number" id="competitor_price" name="competitor_price" min="0" step="0.01" required value="{% if input_data %}{{ input_data.competitor_price }}{% endif %}" class="w-full p-2 border rounded" placeholder="e.g., 195.50"/>
+        </div>
+
+        <!-- Weather -->
+        <div>
+          <label class="block mb-1 font-medium" for="weather">🌤️ Weather</label>
+          <select id="weather" name="weather" required class="w-full p-2 border rounded">
+            <option value="">Select Weather</option>
+            {% if valid_values.weather %}
+              {% for value in valid_values.weather %}
+              <option value="{{ value }}" {% if input_data and input_data.weather == value %}selected{% endif %}>{{ value }}</option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+
+        <!-- Product Name -->
+        <div>
+          <label class="block mb-1 font-medium" for="product_name">🏷️ Product Name</label>
+          <select id="product_name" name="product_name" required class="w-full p-2 border rounded">
+            <option value="">Select Product</option>
+            {% if valid_values.product_name %}
+              {% for value in valid_values.product_name %}
+              <option value="{{ value }}" {% if input_data and input_data.product_name == value %}selected{% endif %}>{{ value }}</option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+
+        <!-- Base Price -->
+        <div>
+          <label class="block mb-1 font-medium" for="base_price">💵 Base Price</label>
+          <input type="number" id="base_price" name="base_price" min="0" step="0.01" required value="{% if input_data %}{{ input_data.base_price }}{% endif %}" class="w-full p-2 border rounded" placeholder="e.g., 190.00"/>
+        </div>
+
+        <!-- Shelf Life Days -->
+        <div>
+          <label class="block mb-1 font-medium" for="shelf_life_days">📅 Shelf Life (Days)</label>
+          <input type="number" id="shelf_life_days" name="shelf_life_days" min="1" step="1" required value="{% if input_data %}{{ input_data.shelf_life_days }}{% endif %}" class="w-full p-2 border rounded" placeholder="e.g., 25"/>
+        </div>
+
+        <!-- Category -->
+        <div>
+          <label class="block mb-1 font-medium" for="category">🗂️ Category</label>
+          <select id="category" name="category" required class="w-full p-2 border rounded">
+            <option value="">Select Category</option>
+            {% if valid_values.category %}
+              {% for value in valid_values.category %}
+              <option value="{{ value }}" {% if input_data and input_data.category == value %}selected{% endif %}>{{ value }}</option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+
+        <div class="md:col-span-2 mt-4">
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+            🎯 Predict Demand
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Results Section -->
+    {% if prediction is defined or error is defined %}
+    <section class="bg-white rounded-lg shadow p-6 mb-8">
+      {% if success and prediction is defined %}
+      <div class="text-center">
+        <h2 class="text-xl font-bold text-green-700">✅ Prediction Result</h2>
+        <p class="text-3xl font-semibold mt-2">{{ prediction }}</p>
+        <p class="text-sm text-gray-500">Effective Demand</p>
+      </div>
+
+      {% if input_data %}
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold mb-2">📋 Input Summary</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+          <div><strong>Location:</strong> {{ input_data.location }}</div>
+          <div><strong>Stock Level:</strong> {{ input_data.stock_level }}</div>
+          <div><strong>Competitor Price:</strong> ${{ input_data.competitor_price }}</div>
+          <div><strong>Weather:</strong> {{ input_data.weather }}</div>
+          <div><strong>Product:</strong> {{ input_data.product_name }}</div>
+          <div><strong>Base Price:</strong> ${{ input_data.base_price }}</div>
+          <div><strong>Shelf Life:</strong> {{ input_data.shelf_life_days }} days</div>
+          <div><strong>Category:</strong> {{ input_data.category }}</div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% elif error is defined %}
+      <div class="text-center text-red-600 font-semibold">
+        <h2 class="text-xl mb-2">❌ Prediction Error</h2>
+        <p>{{ error }}</p>
+      </div>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    <!-- Info Cards -->
+    <section class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">🧠 Model Information</h2>
+      <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-700">
+        <div class="p-4 border rounded">
+          <h3 class="font-semibold text-blue-700 mb-2">TabTransformer</h3>
+          <p>Transformer-based model for tabular data prediction.</p>
+        </div>
+        <div class="p-4 border rounded">
+          <h3 class="font-semibold text-blue-700 mb-2">Features Used</h3>
+          <ul class="list-disc ml-5">
+            <li>Location (categorical)</li>
+            <li>Stock Level (numerical)</li>
+            <li>Competitor Price (numerical)</li>
+            <li>Weather (categorical)</li>
+            <li>Product Name (categorical)</li>
+            <li>Base Price (numerical)</li>
+            <li>Shelf Life (numerical)</li>
+            <li>Category (categorical)</li>
+          </ul>
+        </div>
+        <div class="p-4 border rounded">
+          <h3 class="font-semibold text-blue-700 mb-2">Output</h3>
+          <p>Predicted effective demand (expected units sold).</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('.prediction-form');
+      const submitBtn = document.querySelector('.predict-btn');
+
+      if (form && submitBtn) {
+        form.addEventListener('submit', function() {
+          submitBtn.innerHTML = '⏳ Predicting...';
+          submitBtn.disabled = true;
+        });
+      }
+    });
+  </script>
+</body>
+</html>

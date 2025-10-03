@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}3R Management - Walmart Sparkathon{% endblock %}
+{% block header %}🔄 Circular Economy Analyzer{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+  <!-- Hero Section -->
+  <div class="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-blue-600 rounded-3xl p-8 mb-8 shadow-2xl">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="relative z-10 text-center">
+      <div class="inline-flex items-center bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-sm mb-4">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        3R SMART SYSTEM
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+        Circular <span class="text-yellow-400">Economy</span> Analyzer
+      </h1>
+      <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+        Upload an image to get AI-powered recommendations for sustainable product lifecycle management
+      </p>
+    </div>
+    <div class="absolute top-4 right-4 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl"></div>
+    <div class="absolute bottom-4 left-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+  </div>
+
+  <!-- Upload + How It Works (always full width) -->
+  <div class="grid grid-cols-1 gap-8 mb-8">
+    <!-- Upload Section -->
+    <div class="relative group">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative bg-white rounded-2xl p-8 shadow-lg">
+        <form id="analysisForm" action="/analyze-image" method="post" enctype="multipart/form-data">
+          <!-- Image Upload -->
+          <div class="mb-6">
+            <label class="block text-lg font-semibold text-gray-800 mb-4">📷 Product Image</label>
+            <div id="uploadArea" class="upload-area">
+              <div class="upload-content">
+                <div class="upload-icon">📁</div>
+                <p class="text-lg font-medium text-gray-700">Drag & drop an image or click to select</p>
+                <p class="upload-hint">Supports JPG, PNG, WebP (max 10MB)</p>
+              </div>
+              <input type="file" id="fileInput" name="file" accept="image/*" class="hidden">
+            </div>
+            <div id="imagePreview" class="image-preview"></div>
+          </div>
+
+          <!-- URL Input -->
+          <div class="mb-6">
+            <label class="block text-lg font-semibold text-gray-800 mb-3">🔗 Or paste image URL</label>
+            <input type="url" name="image_url" placeholder="https://example.com/image.jpg"
+                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all">
+          </div>
+
+          <!-- Fields Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label class="block text-lg font-semibold text-gray-800 mb-3">🏷️ Item Category</label>
+              <select name="item_type" required
+                      class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all">
+                <option value="">Select category...</option>
+                <option value="Electronics">📱 Electronics</option>
+                <option value="Fashion">👕 Fashion & Apparel</option>
+                <option value="Furniture">🪑 Furniture</option>
+                <option value="Home & Garden">🏠 Home & Garden</option>
+                <option value="Sports & Outdoors">⚽ Sports & Outdoors</option>
+                <option value="Books & Media">📚 Books & Media</option>
+                <option value="Toys & Games">🧸 Toys & Games</option>
+                <option value="Automotive">🚗 Automotive</option>
+                <option value="Kitchen & Dining">🍴 Kitchen & Dining</option>
+                <option value="Other">❓ Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-lg font-semibold text-gray-800 mb-3">📅 Product Age</label>
+              <select name="product_age" required
+                      class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all">
+                <option value="">Select age...</option>
+                <option value="Brand New">✨ Brand New</option>
+                <option value="Less than 6 months">🆕 Less than 6 months</option>
+                <option value="6 months - 1 year">📅 6 months - 1 year</option>
+                <option value="1-2 years">📆 1-2 years</option>
+                <option value="2-5 years">⏳ 2-5 years</option>
+                <option value="5-10 years">🕰️ 5-10 years</option>
+                <option value="Over 10 years">⏰ Over 10 years</option>
+                <option value="Unknown">❓ Unknown</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-6">
+            <label class="block text-lg font-semibold text-gray-800 mb-3">📝 Product Description</label>
+            <textarea name="product_description" required
+                      class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all min-h-[120px] resize-vertical"
+                      placeholder="Describe the product condition, any issues, brand, model, etc."></textarea>
+            <small class="text-gray-600 block mt-2">💡 Be specific about condition, defects, and functional issues</small>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" id="submitBtn"
+                  class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all shadow-lg">
+            <span class="btn-text flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              Analyze Image
+            </span>
+            <div class="loading-spinner hidden" id="loadingSpinner">
+              <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+              </svg>
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="bg-white rounded-2xl p-6 shadow-lg">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">How it works</h3>
+      <div class="space-y-4">
+        <div class="flex items-start space-x-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
+          <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-semibold text-gray-800 mb-2">AI Analysis</h4>
+            <p class="text-gray-600 text-sm">Advanced computer vision analyzes product condition and wear patterns</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4 p-4 bg-gradient-to-r from-green-50 to-teal-50 rounded-xl">
+          <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-semibold text-gray-800 mb-2">Sustainability Focus</h4>
+            <p class="text-gray-600 text-sm">Recommendations prioritize environmental impact and circular economy principles</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl">
+          <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-semibold text-gray-800 mb-2">Actionable Insights</h4>
+            <p class="text-gray-600 text-sm">Get specific recommendations with confidence scores and detailed reasoning</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="grid grid-cols-2 gap-4 mb-8">
+    <div class="bg-white rounded-2xl p-6 shadow-lg text-center">
+      <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+        </svg>
+      </div>
+      <div class="text-2xl font-bold text-gray-800">98%</div>
+      <div class="text-sm text-gray-600">Accuracy Rate</div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 shadow-lg text-center">
+      <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="text-2xl font-bold text-gray-800">2.3s</div>
+      <div class="text-sm text-gray-600">Avg Analysis</div>
+    </div>
+  </div>
+
+  <!-- Features Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Feature 1 -->
+    <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow group">
+      <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-800 mb-3">Smart Recognition</h3>
+      <p class="text-gray-600">Advanced AI identifies products, materials, and condition with high precision</p>
+    </div>
+    <!-- Feature 2 -->
+    <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow group">
+      <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-800 mb-3">Eco-Friendly</h3>
+      <p class="text-gray-600">Prioritizes environmental sustainability in all recommendation strategies</p>
+    </div>
+    <!-- Feature 3 -->
+    <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow group">
+      <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-800 mb-3">Community Impact</h3>
+      <p class="text-gray-600">Connects products with local communities and charitable organizations</p>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  .upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 16px;
+    padding: 3rem;
+    text-align: center;
+    cursor: pointer;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  }
+  .upload-area.drag-over { border-color: #3b82f6; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); }
+  .upload-content { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .upload-icon { font-size: 3rem; color: #6b7280; margin-bottom: 1rem; }
+  .upload-hint { color: #6b7280; font-size: .875rem; }
+  .image-preview { display: none; margin-top: 1.5rem; text-align: center; }
+  .loading-spinner { display: none; }
+</style>
+
+<script>
+  const uploadArea = document.getElementById('uploadArea'),
+        fileInput  = document.getElementById('fileInput'),
+        imagePreview = document.getElementById('imagePreview'),
+        form = document.getElementById('analysisForm'),
+        submitBtn = document.getElementById('submitBtn'),
+        loadingSpinner = document.getElementById('loadingSpinner');
+
+  uploadArea.addEventListener('click', ()=> fileInput.click());
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+  uploadArea.addEventListener('dragleave', ()=> uploadArea.classList.remove('drag-over'));
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault(); uploadArea.classList.remove('drag-over');
+    if(e.dataTransfer.files.length) { fileInput.files = e.dataTransfer.files; handleFile(e.dataTransfer.files[0]); }
+  });
+  fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+  function handleFile(file){
+    if(!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = evt=>{
+      imagePreview.innerHTML = `<img src="${evt.target.result}" alt="Preview" class="rounded-lg max-h-60 shadow-lg"><p class="mt-2 text-gray-600">${file.name}</p>`;
+      imagePreview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+  form.addEventListener('submit', ()=>{
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+  });
+</script>
+{% endblock %}

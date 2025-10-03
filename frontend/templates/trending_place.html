@@ -1,0 +1,552 @@
+{% extends "base.html" %}
+
+{% block title %}Trending Products - Walmart Sparkathon{% endblock %}
+
+{% block header %}Trending Products Analytics{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden bg-gradient-to-r from-purple-900 via-indigo-800 to-blue-600 rounded-3xl p-8 mb-8 shadow-2xl">
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="relative z-10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="inline-flex items-center bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-sm mb-4">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        <span id="liveIndicator">LIVE TRENDS</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                        🔥 Trending <span class="text-yellow-400">Products</span>
+                    </h1>
+                    <p class="text-xl text-purple-100 max-w-2xl">
+                        Discover what's hot in the market with real-time Google Trends data and AI-powered insights
+                    </p>
+                </div>
+                <div class="hidden md:block">
+                    <div class="w-32 h-32 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                        <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Floating Elements -->
+        <div class="absolute top-4 right-4 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl"></div>
+        <div class="absolute bottom-4 left-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="bg-white rounded-2xl p-6 mb-8 shadow-lg">
+        <div class="flex flex-wrap items-center gap-4">
+            <div class="flex items-center space-x-4">
+                <label class="text-gray-700 font-medium">Category:</label>
+                <select id="categoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="all">All Categories</option>
+                    <!-- <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="home">Home & Garden</option>
+                    <option value="health">Health & Beauty</option>
+                    <option value="sports">Sports & Outdoors</option> -->
+                </select>
+            </div>
+            <div class="flex items-center space-x-4">
+                <label class="text-gray-700 font-medium">Time Range:</label>
+                <select id="timeFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="7d">Last 7 Days</option>
+                    <!-- <option value="30d">Last 30 Days</option>
+                    <option value="90d">Last 90 Days</option>
+                    <option value="1y">Last Year</option> -->
+                </select>
+            </div>
+            <button id="refreshBtn" class="ml-auto px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span id="refreshBtnText">Refresh Data</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="{% if not trends_data and not error %}block{% else %}hidden{% endif %}">
+        <div class="text-center py-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+            </div>
+            <p class="text-gray-600 text-lg">Loading trending products...</p>
+            <p class="text-gray-500 text-sm mt-2">Please wait while we fetch the latest data</p>
+        </div>
+        
+        <!-- Loading Skeleton -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {% for i in range(4) %}
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
+                <div class="p-6">
+                    <div class="flex items-start space-x-4 mb-6">
+                        <div class="w-20 h-20 bg-gray-200 rounded-2xl"></div>
+                        <div class="flex-1">
+                            <div class="h-6 bg-gray-200 rounded mb-2"></div>
+                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                        </div>
+                    </div>
+                    <div class="h-32 bg-gray-200 rounded-xl mb-4"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="h-20 bg-gray-200 rounded-xl"></div>
+                        <div class="h-20 bg-gray-200 rounded-xl"></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    {% if error %}
+    <div id="errorMessage" class="bg-red-50 border border-red-200 rounded-2xl p-6 mb-8">
+        <div class="flex items-center">
+            <svg class="w-6 h-6 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+                <h3 class="text-red-800 font-semibold">⚠️ Error Loading Data</h3>
+                <p class="text-red-600">{{ error }}</p>
+                <button onclick="location.reload()" class="mt-2 text-red-700 hover:text-red-800 font-medium">
+                    Try Again →
+                </button>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div id="errorMessage" class="hidden bg-red-50 border border-red-200 rounded-2xl p-6 mb-8">
+        <div class="flex items-center">
+            <svg class="w-6 h-6 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+                <h3 class="text-red-800 font-semibold">⚠️ Error Loading Data</h3>
+                <p class="text-red-600" id="errorText">Please check back later or try refreshing the page.</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Products Grid -->
+    <div id="productsGrid" class="{% if trends_data %}block{% else %}hidden{% endif %}">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {% for trend in trends_data %}
+            <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 card-hover" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                <div class="p-6">
+                    <div class="flex items-start space-x-4 mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center overflow-hidden">
+                            {% if trend.product.image_url %}
+                            <img src="{{ trend.product.image_url }}" alt="{{ trend.product.title }}" class="w-full h-full object-cover">
+                            {% else %}
+                            <div class="text-2xl">📦</div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">{{ trend.product.title }}</h3>
+                            <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                {{ trend.product.category|title }}
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <div class="flex items-center text-green-600 mb-1">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12" />
+                                </svg>
+                                <span class="font-semibold">{% if trend.growth_percentage %}+{{ trend.growth_percentage }}%{% else %}+0%{% endif %}</span>
+                            </div>
+                            <p class="text-sm text-gray-500">This week</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                            Interest Over Time
+                        </h4>
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <canvas id="chart-{{ loop.index0 }}" class="trend-chart w-full h-32"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4">
+                            <h5 class="font-semibold text-gray-800 mb-2 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
+                                </svg>
+                                🌍 Top Region
+                            </h5>
+                            <p class="text-lg font-bold text-gray-800">{{ trend.top_region.name if trend.top_region else 'N/A' }}</p>
+                            <p class="text-sm text-gray-600">{{ trend.top_region.interest if trend.top_region else '0' }}% interest</p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-green-50 to-teal-50 rounded-xl p-4">
+                            <h5 class="font-semibold text-gray-800 mb-2 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                🔍 Search Volume
+                            </h5>
+                            <p class="text-lg font-bold text-gray-800">{{ trend.search_volume if trend.search_volume else 'N/A' }}</p>
+                            <p class="text-sm text-gray-600">Monthly searches</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-yellow-50 rounded-xl p-4">
+                        <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                            🔥 Rising Queries
+                        </h5>
+                        <div class="space-y-2">
+                            {% if trend.rising_queries %}
+                                {% for query in trend.rising_queries[:3] %}
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-700">{{ query }}</span>
+                                    <span class="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded">Rising</span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-sm text-gray-600">No rising queries available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- {% if trend.regional_data %}
+                    <div class="regional-data mt-6">
+                        <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            📊 Regional Interest
+                        </h5>
+                        <div class="space-y-2">
+                            {% for region in trend.regional_data[:5] %}
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-700">{{ region.name }}</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full" style="width: {{ region.interest }}%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">{{ region.interest }}%</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %} -->
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- No Data State -->
+    {% if not trends_data and not error %}
+    <div id="noDataState" class="hidden text-center py-12">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+            <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">📦 No trending products found</h3>
+        <p class="text-gray-600">Please check back later or try refreshing the page.</p>
+    </div>
+    {% endif %}
+
+    <!-- Performance Summary -->
+    {% if trends_data %}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-2xl p-6 shadow-lg ">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                </div>
+                <span class="text-green-600 text-sm font-medium">+32%</span>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">{{ trends_data|length * 150 }}K</h3>
+            <p class="text-gray-600 text-sm">Total Searches</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12" />
+                    </svg>
+                </div>
+                <span class="text-green-600 text-sm font-medium">+18%</span>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">{{ trends_data|length }}</h3>
+            <p class="text-gray-600 text-sm">Trending Products</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
+                    </svg>
+                </div>
+                <span class="text-blue-600 text-sm font-medium">+24%</span>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">{{ trends_data|length * 3 }}</h3>
+            <p class="text-gray-600 text-sm">Active Regions</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <span class="text-purple-600 text-sm font-medium">Live</span>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">5m</h3>
+            <p class="text-gray-600 text-sm">Data Refresh</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+<script>
+    // Chart creation function
+    function createChart(canvasId, data) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.date || d.label),
+                datasets: [{
+                    label: 'Interest',
+                    data: data.map(d => d.value),
+                    borderColor: '#4285f4',
+                    backgroundColor: 'rgba(66, 133, 244, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 10
+                            }
+                        }
+                    },
+                    y: {
+                        display: true,
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        },
+                        ticks: {
+                            font: {
+                                size: 10
+                            }
+                        }
+                    }
+                },
+                elements: {
+                    point: {
+                        radius: 2,
+                        hoverRadius: 4
+                    }
+                }
+            }
+        });
+    }
+
+    // Initialize charts from backend data
+    document.addEventListener('DOMContentLoaded', function() {
+        {% for trend in trends_data %}
+        (function() {
+            const data = {{ trend.interest_over_time | tojson }};
+            createChart('chart-{{ loop.index0 }}', data);
+        })();
+        {% endfor %}
+
+        // Event listeners
+        document.getElementById('categoryFilter').addEventListener('change', function() {
+            console.log('Category filter changed:', this.value);
+            filterProducts();
+        });
+
+        document.getElementById('timeFilter').addEventListener('change', function() {
+            console.log('Time filter changed:', this.value);
+            filterProducts();
+        });
+
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            refreshData();
+        });
+
+        // Auto-refresh every 5 minutes
+        setInterval(refreshData, 300000);
+    });
+
+    // Filter products based on selection
+    function filterProducts() {
+        const category = document.getElementById('categoryFilter').value;
+        const timeRange = document.getElementById('timeFilter').value;
+        
+        // Here you would typically make an AJAX call to your backend
+        // For now, we'll just show a loading state
+        showLoading();
+        
+        setTimeout(() => {
+            hideLoading();
+            // Update URL parameters and reload if needed
+            const params = new URLSearchParams();
+            if (category !== 'all') params.append('category', category);
+            if (timeRange !== '30d') params.append('time', timeRange);
+            
+            const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+            window.history.pushState({}, '', newUrl);
+        }, 1000);
+    }
+
+    // Refresh data
+    function refreshData() {
+        const btn = document.getElementById('refreshBtn');
+        const btnText = document.getElementById('refreshBtnText');
+        
+        btn.disabled = true;
+        btn.classList.add('btn-loading');
+        btnText.textContent = 'Refreshing...';
+        
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+    }
+
+    // Utility functions
+    function showLoading() {
+        document.getElementById('loadingState').classList.remove('hidden');
+        document.getElementById('productsGrid').classList.add('hidden');
+        document.getElementById('noDataState').classList.add('hidden');
+    }
+
+    function hideLoading() {
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('productsGrid').classList.remove('hidden');
+    }
+
+    function showError(message) {
+        document.getElementById('errorText').textContent = message;
+        document.getElementById('errorMessage').classList.remove('hidden');
+        hideLoading();
+    }
+
+    function hideError() {
+        document.getElementById('errorMessage').classList.add('hidden');
+    }
+
+    // Live indicator animation
+    function animateLiveIndicator() {
+        const indicator = document.getElementById('liveIndicator');
+        indicator.classList.add('animate-pulse');
+        setTimeout(() => {
+            indicator.classList.remove('animate-pulse');
+        }, 2000);
+    }
+
+    // Animate live indicator every 10 seconds
+    setInterval(animateLiveIndicator, 10000);
+
+    // Card hover effects
+    document.querySelectorAll('.card-hover').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+
+<style>
+    .card-hover {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+      50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.8); }
+    }
+    
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    /* Smooth transitions for all interactive elements */
+    * {
+      transition: all 0.3s ease;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+  
+  {% endblock %}

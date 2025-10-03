@@ -1,0 +1,559 @@
+{% extends "base.html" %}
+
+{% block title %}Intelligence Dashboard - Walmart Sparkathon{% endblock %}
+
+{% block header %}Walmart Intelligence Hub{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+  <!-- Hero Section -->
+  <div class="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-blue-600 rounded-3xl p-8 mb-8 shadow-2xl">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="relative z-10 text-center">
+      <div class="inline-flex items-center bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-sm mb-4">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        SPARKATHON 2025
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+        Walmart <span class="text-yellow-400">Intelligence</span> Dashboard
+      </h1>
+      <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+        Empowering retail excellence through AI-driven insights and sustainable marketplace solutions
+      </p>
+    </div>
+    
+    <!-- Floating Elements -->
+    <div class="absolute top-4 right-4 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl"></div>
+    <div class="absolute bottom-4 left-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+  </div>
+
+  <!-- Key Metrics Dashboard -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    <!-- Enhanced Analytics Cards -->
+    <div class="relative group">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative bg-white rounded-2xl p-6 shadow-lg">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">Category Distribution</h3>
+          <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <div class="relative">
+            <svg viewBox="0 0 120 120" class="w-40 h-40 transform -rotate-90">
+              <circle cx="60" cy="60" r="54" fill="none" stroke="#f1f5f9" stroke-width="8"/>
+              <g id="categoryChart" class="animate-pulse"></g>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-gray-800">100%</div>
+                <div class="text-sm text-gray-500">Coverage</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="categoryLegend" class="mt-4 space-y-2"></div>
+      </div>
+    </div>
+
+    <!-- Perishability Stats -->
+    <div class="relative group">
+      <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative bg-white rounded-2xl p-6 shadow-lg">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">Perishability Index</h3>
+          <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <div class="relative">
+            <svg viewBox="0 0 120 120" class="w-40 h-40 transform -rotate-90">
+              <circle cx="60" cy="60" r="54" fill="none" stroke="#f1f5f9" stroke-width="8"/>
+              <g id="perishChart"></g>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-green-600">85%</div>
+                <div class="text-sm text-gray-500">Fresh</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="perishLegend" class="mt-4 space-y-2"></div>
+      </div>
+    </div>
+
+    <!-- Carbon Footprint -->
+    <div class="relative group">
+      <div class="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-500 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative bg-white rounded-2xl p-6 shadow-lg">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">Carbon Impact</h3>
+          <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <div class="relative">
+            <svg viewBox="0 0 120 120" class="w-40 h-40 transform -rotate-90">
+              <circle cx="60" cy="60" r="54" fill="none" stroke="#f1f5f9" stroke-width="8"/>
+              <circle id="carbonChart" cx="60" cy="60" r="54" fill="none" stroke="#ef4444" stroke-width="8" 
+                      stroke-dasharray="339.292" stroke-dashoffset="339.292" stroke-linecap="round"
+                      class="transition-all duration-2000 ease-out"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-red-600">8.2M</div>
+                <div class="text-sm text-gray-500">MT CO₂</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 text-center">
+          <div class="text-sm text-gray-600 mb-2">July 2025 Emissions</div>
+          <div class="flex items-center justify-center">
+            <div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+            <span class="text-sm">Monitoring Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Solutions Grid -->
+  <div class="mb-8">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-800 mb-4">AI-Powered Solutions</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">
+        Leverage cutting-edge artificial intelligence to optimize operations, reduce waste, and maximize profitability
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Enhanced Solution Cards -->
+      <a href="/image-analysis" class="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors">3R Smart System</h3>
+              <span class="text-sm text-blue-600 font-medium">AI-Powered</span>
+            </div>
+          </div>
+          <p class="text-gray-600 mb-4">Intelligent decision-making for Reduce, Reuse, Recycle processes using computer vision and machine learning algorithms.</p>
+          <div class="flex items-center text-blue-600">
+            <span class="font-medium">Explore System</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="/prediction#pricing" class="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover">
+        <div class="absolute inset-0 bg-gradient-to-r from-green-600 to-blue-600 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-gray-800 group-hover:text-green-600 transition-colors">Dynamic Pricing</h3>
+              <span class="text-sm text-green-600 font-medium">ML-Driven</span>
+            </div>
+          </div>
+          <p class="text-gray-600 mb-4">Advanced pricing algorithms that optimize revenue while minimizing waste through intelligent demand forecasting.</p>
+          <div class="flex items-center text-green-600">
+            <span class="font-medium">View Analytics</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="/prediction#acquisition" class="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-gray-800 group-hover:text-purple-600 transition-colors">Acquisition AI</h3>
+              <span class="text-sm text-purple-600 font-medium">RL-Based</span>
+            </div>
+          </div>
+          <p class="text-gray-600 mb-4">Reinforcement learning algorithms that optimize product acquisition strategies based on market conditions and demand patterns.</p>
+          <div class="flex items-center text-purple-600">
+            <span class="font-medium">Access Predictor</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="/trends-page"
+        class="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover">
+        <div class="absolute inset-0 bg-gradient-to-r from-teal-600 to-cyan-600 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-gray-800 group-hover:text-teal-600 transition-colors">Trend Analytics</h3>
+              <span class="text-sm text-teal-600 font-medium">Real-Time</span>
+            </div>
+          </div>
+          <p class="text-gray-600 mb-4">Monitor trending products across categories to strategically manage inventory and capitalize on market opportunities.</p>
+          <div class="flex items-center text-teal-600">
+            <span class="font-medium">View Trends</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="/sustainability" class="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover">
+        <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-gray-800 group-hover:text-indigo-600 transition-colors">Sustainability AI</h3>
+              <span class="text-sm text-indigo-600 font-medium">Storehouse</span>
+            </div>
+          </div>
+          <p class="text-gray-600 mb-4">Advanced models suggest better products based on Sustainability in a Gamified environment.</p>
+          <div class="flex items-center text-indigo-600">
+            <span class="font-medium">Launch Predictor</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="/map" class="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 card-hover">
+        <div class="absolute inset-0 bg-gradient-to-r from-rose-600 to-orange-600 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <div class="p-6">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-gradient-to-r from-rose-500 to-orange-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-gray-800 group-hover:text-rose-600 transition-colors">Social Impact</h3>
+              <span class="text-sm text-rose-600 font-medium">Community</span>
+            </div>
+          </div>
+          <p class="text-gray-600 mb-4">Connect with nearby NGOs and charities to distribute surplus products before spoilage, maximizing social good.</p>
+          <div class="flex items-center text-rose-600">
+            <span class="font-medium">View Impact Map</span>
+            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Performance Metrics -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-2xl p-6 shadow-lg">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <span class="text-green-600 text-sm font-medium">+12%</span>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-800">$2.4M</h3>
+      <p class="text-gray-600 text-sm">Monthly Revenue</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-lg">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <span class="text-green-600 text-sm font-medium">-8%</span>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-800">92%</h3>
+      <p class="text-gray-600 text-sm">Waste Reduction</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-lg">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+          </svg>
+        </div>
+        <span class="text-blue-600 text-sm font-medium">+24%</span>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-800">1.2M</h3>
+      <p class="text-gray-600 text-sm">Customers Served</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-lg">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
+          </svg>
+        </div>
+        <span class="text-red-600 text-sm font-medium">-15%</span>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-800">68%</h3>
+      <p class="text-gray-600 text-sm">Carbon Efficiency</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Chart data
+  const categoryData = [
+    { label: "Groceries", percent: 30, color: "#3b82f6" },
+    { label: "Clothing", percent: 25, color: "#8b5cf6" },
+    { label: "Household", percent: 20, color: "#06b6d4" },
+    { label: "Electronics", percent: 15, color: "#10b981" },
+    { label: "Others", percent: 10, color: "#f59e0b" }
+  ];
+
+  const perishData = [
+    { label: "Fresh", percent: 55, color: "#10b981" },
+    { label: "Near Expiry", percent: 30, color: "#f59e0b" },
+    { label: "Expired", percent: 15, color: "#ef4444" }
+  ];
+
+  function createCircleChart(data, chartId, legendId) {
+    const chart = document.getElementById(chartId);
+    const legend = document.getElementById(legendId);
+    
+    if (!chart || !legend) return;
+
+    chart.innerHTML = '';
+    legend.innerHTML = '';
+
+    const total = data.reduce((sum, item) => sum + item.percent, 0);
+    const radius = 54;
+    const circumference = 2 * Math.PI * radius;
+    let currentAngle = 0;
+
+    data.forEach((item, index) => {
+      const angle = (item.percent / total) * 360;
+      const strokeDasharray = circumference;
+      const strokeDashoffset = circumference - (circumference * item.percent / 100);
+      
+      // Create path for each segment
+      const startAngle = currentAngle;
+      const endAngle = currentAngle + angle;
+      const largeArc = angle > 180 ? 1 : 0;
+      
+      const start = polarToCartesian(60, 60, radius, endAngle);
+      const end = polarToCartesian(60, 60, radius, startAngle);
+      
+      const pathData = [
+        "M", start.x, start.y,
+        "A", radius, radius, 0, largeArc, 0, end.x, end.y
+      ].join(" ");
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathData);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", item.color);
+      path.setAttribute("stroke-width", "8");
+      path.setAttribute("stroke-linecap", "round");
+      path.setAttribute("stroke-dasharray", strokeDasharray);
+      path.setAttribute("stroke-dashoffset", strokeDasharray);
+      
+      chart.appendChild(path);
+
+      // Animate the path
+      setTimeout(() => {
+        path.style.transition = "stroke-dashoffset 1s ease";
+        path.setAttribute("stroke-dashoffset", strokeDashoffset);
+      }, index * 200);
+
+      // Create legend item
+      const legendItem = document.createElement("div");
+      legendItem.className = "flex items-center";
+      legendItem.innerHTML = `
+        <div class="w-3 h-3 rounded-full mr-2" style="background-color: ${item.color}"></div>
+        <span class="text-sm text-gray-600">${item.label} (${item.percent}%)</span>
+      `;
+      legend.appendChild(legendItem);
+
+      currentAngle = endAngle;
+    });
+  }
+
+  function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+    const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+    return {
+      x: centerX + (radius * Math.cos(angleInRadians)),
+      y: centerY + (radius * Math.sin(angleInRadians))
+    };
+  }
+
+  function animateCarbonChart() {
+    const carbonChart = document.getElementById("carbonChart");
+    if (carbonChart) {
+      setTimeout(() => {
+        carbonChart.style.transition = "stroke-dashoffset 2s ease";
+        carbonChart.setAttribute("stroke-dashoffset", "169.646"); // 50% of circumference
+      }, 500);
+    }
+  }
+
+  // Initialize charts when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    createCircleChart(categoryData, "categoryChart", "categoryLegend");
+    createCircleChart(perishData, "perishChart", "perishLegend");
+    animateCarbonChart();
+    
+    // Add hover effects to cards
+    const cards = document.querySelectorAll('.card-hover');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+      });
+    });
+  });
+
+  // Add smooth scrolling for any internal links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute('href')).scrollIntoView({
+        behavior: 'smooth'
+      });
+    });
+  });
+
+  // Add loading animation for performance metrics
+  function animateCounters() {
+    const counters = document.querySelectorAll('.text-2xl.font-bold');
+    counters.forEach(counter => {
+      const target = counter.innerText;
+      const isNumber = !isNaN(parseFloat(target));
+      
+      if (isNumber) {
+        const finalValue = parseFloat(target);
+        let current = 0;
+        const increment = finalValue / 100;
+        
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= finalValue) {
+            counter.innerText = target;
+            clearInterval(timer);
+          } else {
+            if (target.includes('M')) {
+              counter.innerText = current.toFixed(1) + 'M';
+            } else if (target.includes('%')) {
+              counter.innerText = Math.floor(current) + '%';
+            } else {
+              counter.innerText = current.toFixed(1);
+            }
+          }
+        }, 20);
+      }
+    });
+  }
+
+  // Initialize counter animations
+  setTimeout(animateCounters, 1000);
+</script>
+
+<style>
+  .card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.8); }
+  }
+  
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  /* Smooth transitions for all interactive elements */
+  * {
+    transition: all 0.3s ease;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+</style>
+
+{% endblock %}

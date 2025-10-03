@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply ↔ Demand Dashboard - Walmart Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" ></script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+    font-family: 'Inter', sans-serif;
+    }
+
+    .walmart-gradient {
+    background: linear-gradient(135deg, #004c91 0%, #0071ce 25%, #ffc220 100%);
+    }
+
+    .sidebar-gradient {
+    background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%);
+    }
+
+    .nav-item {
+    transition: all 0.2s ease;
+    }
+
+    .nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    }
+
+    .walmart-badge {
+    background: linear-gradient(45deg, #ffc220, #ffed4a);
+    color: #1a202c;
+    }
+
+    .glass-effect {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .slide-in {
+    animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        .notification {
+            animation: slideIn 0.3s ease;
+        }
+        
+        .giver-marker {
+            color: #059669;
+            font-size: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .needy-marker {
+            color: #dc2626;
+            font-size: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .match-item {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .match-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .match-full {
+            border-left: 4px solid #059669;
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+        }
+        
+        .match-partial {
+            border-left: 4px solid #f59e0b;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        }
+        
+        .status-success {
+            color: #059669;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid #a7f3d0;
+        }
+        
+        .status-info {
+            color: #0369a1;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid #93c5fd;
+        }
+        
+        .status-warning {
+            color: #d97706;
+            background: linear-gradient(135deg, #fffbeb 0%, #fed7aa 100%);
+            border: 1px solid #fbbf24;
+        }
+        
+        .product-select {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .product-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .input-field {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background: white;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #5b21b6 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        #map {
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid #e2e8f0;
+        }
+        
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .leaflet-popup-content {
+            margin: 15px;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+    <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+        <div class="flex h-screen">
+          
+          <!-- Sidebar goes here -->
+          <div id="sidebar" class="sidebar-gradient w-72 p-6 fixed top-0 left-0 h-full shadow-2xl transform -translate-x-full transition-all duration-300 z-50 slide-in">
+            <!-- Walmart Brand Header -->
+            <div class="flex items-center mb-8 pb-6 border-b border-white/20">
+              <div class="walmart-badge px-4 py-2 rounded-full font-bold text-lg mr-3">W</div>
+              <div>
+                <h2 class="text-white font-bold text-xl">Walmart</h2>
+                <p class="text-blue-200 text-sm">Sparkathon 2025</p>
+              </div>
+            </div>
+          
+            <!-- Navigation Menu -->
+            <nav class="space-y-2">
+              <a href="/" class="nav-item flex items-center px-4 py-3 text-white hover:text-yellow-300 transition-colors group">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
+                </svg>
+                Dashboard
+              </a>
+              <!-- Add other nav items as needed -->
+<a href="/image-analysis"
+    class="nav-item flex items-center px-4 py-3 text-white hover:text-yellow-300 transition-colors group">
+    <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+    </svg>
+    3R Management
+</a>
+
+<a href="/prediction" class="nav-item flex items-center px-4 py-3 text-white hover:text-yellow-300 transition-colors group">
+    <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+    </svg>
+    Smart Predictions
+  </a>
+
+<!-- <a href="/acquisition"
+    class="nav-item flex items-center px-4 py-3 text-white hover:text-yellow-300 transition-colors group">
+    <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    </svg>
+    Acquisition AI
+</a> -->
+
+<a href="/sustainability"
+          class="nav-item flex items-center px-4 py-3 text-white hover:text-yellow-300 transition-colors group">
+          <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+          </svg>
+          Sustainability AI
+        </a>
+
+<a href="/trends-page"
+    class="nav-item flex items-center px-4 py-3 text-white hover:text-yellow-300 transition-colors group">
+    <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+    </svg>
+    Trend Analytics
+</a>
+
+
+
+<a href="/map" class="nav-item flex items-center px-4 py-3 text-white hover:text-yellow-300 transition-colors group">
+    <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+    </svg>
+    Social Impact
+</a>
+            </nav>
+            <!-- Footer in Sidebar -->
+            <div class="absolute bottom-6 left-6 right-6">
+                <div class="backdrop-blur-md bg-white/10 border border-white/30 p-4 rounded-lg">
+                  <div class="flex items-center text-white">
+                    <div class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+                    <span class="text-sm">System Online</span>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <!-- Main Content Area -->
+          <div id="main-content" class="flex-1 flex flex-col transition-all duration-300">
+            <!-- Header goes here -->
+            <!-- Professional Header -->
+<header class="glass-effect shadow-lg p-6 flex items-center justify-between border-b border-white/20">
+    <div class="flex items-center">
+      <button id="menu-btn" onclick="toggleSidebar()" class="text-2xl text-gray-700 hover:text-blue-600 transition-colors mr-4 hover:scale-110 transform">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+      <div class="walmart-gradient text-transparent bg-clip-text">
+        <h1 class="text-2xl font-bold">🌾 Supply ↔ Demand Dashboard</h1>
+      </div>
+    </div>
+    
+    <div class="flex items-center space-x-4">
+        <!-- Notification Bell -->
+        <button class="relative p-2 text-gray-600 hover:text-blue-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        
+        <!-- Profile -->
+        <a href="/profile" class="flex items-center space-x-2 hover:bg-white/50 rounded-lg p-2 transition-colors">
+            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            </div>
+            <span class="text-gray-700 font-medium">Admin</span>
+        </a>
+        </div>
+  </header>
+
+  <!-- base.html code ends here -->
+            <!-- Your existing content goes here -->
+
+    <main class="flex-1 overflow-auto p-6 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div class="max-w-7xl mx-auto p-6">
+            <!-- Hero Section -->
+            <div class="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-blue-600 rounded-3xl p-8 mb-8 shadow-2xl">
+                <div class="absolute inset-0 bg-black/20"></div>
+                <div class="relative z-10 text-center">
+                    <div class="inline-flex items-center bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-sm mb-4">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        WALMART INTELLIGENCE
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                        🌾 Supply ↔ <span class="text-yellow-400">Demand</span> Dashboard
+                    </h1>
+                    <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+                        AI-powered marketplace connecting suppliers with demand, optimizing distribution and reducing waste
+                    </p>
+                </div>
+                
+                <!-- Floating Elements -->
+                <div class="absolute top-4 right-4 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl animate-float"></div>
+                <div class="absolute bottom-4 left-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+            </div>
+    
+            <!-- Interactive Map -->
+            <div class="bg-white rounded-3xl shadow-2xl p-8 mb-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">🗺️ Interactive Supply Chain Map</h2>
+                    <p class="text-gray-600">Click on the map to place suppliers and buyers, watch live connections form automatically</p>
+                </div>
+                <div id="map" class="h-96 w-full"></div>
+            </div>
+            
+            <!-- Registration Panels -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Giver Panel -->
+                <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-teal-500 rounded-3xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative bg-white rounded-3xl p-8 shadow-lg card-hover">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800">🏭 Register as Supplier</h3>
+                            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <form id="giverForm" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Product Category:</label>
+                                <select id="giverProduct" class="w-full px-4 py-3 rounded-xl product-select text-gray-700 font-medium">
+                                    <option value="Wheat">🌾 Wheat</option>
+                                    <option value="Rice">🍚 Rice</option>
+                                    <option value="Corn">🌽 Corn</option>
+                                    <option value="Soybeans">🫘 Soybeans</option>
+                                    <option value="Cotton">🌱 Cotton</option>
+                                    <option value="Sugar">🍯 Sugar</option>
+                                    <option value="Coffee">☕ Coffee</option>
+                                    <option value="Tea">🍃 Tea</option>
+                                    <option value="Spices">🌶️ Spices</option>
+                                    <option value="Fruits">🍎 Fruits</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Supply Capacity (tons):</label>
+                                <input type="number" id="giverCapacity" min="1" required placeholder="Enter capacity in tons" 
+                                       class="w-full px-4 py-3 rounded-xl input-field text-gray-700 font-medium">
+                            </div>
+                            
+                            <button type="button" id="pickGiverLocation" class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-xl btn-primary">
+                                📍 Pick Location on Map
+                            </button>
+                            
+                            <div id="giverLocationStatus" class="px-4 py-3 rounded-xl text-center font-medium status-info">
+                                Click button above, then click on map to set location
+                            </div>
+                            
+                            <button type="submit" id="submitGiver" disabled class="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-teal-600 text-white font-bold rounded-xl btn-secondary opacity-50 cursor-not-allowed">
+                                ✅ Register Supplier
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Needy Panel -->
+                <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-500 rounded-3xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative bg-white rounded-3xl p-8 shadow-lg card-hover">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800">🏬 Register as Buyer</h3>
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <form id="needyForm" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Product Category:</label>
+                                <select id="needyProduct" class="w-full px-4 py-3 rounded-xl product-select text-gray-700 font-medium">
+                                    <option value="Wheat">🌾 Wheat</option>
+                                    <option value="Rice">🍚 Rice</option>
+                                    <option value="Corn">🌽 Corn</option>
+                                    <option value="Soybeans">🫘 Soybeans</option>
+                                    <option value="Cotton">🌱 Cotton</option>
+                                    <option value="Sugar">🍯 Sugar</option>
+                                    <option value="Coffee">☕ Coffee</option>
+                                    <option value="Tea">🍃 Tea</option>
+                                    <option value="Spices">🌶️ Spices</option>
+                                    <option value="Fruits">🍎 Fruits</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Demand Quantity (tons):</label>
+                                <input type="number" id="needyNeed" min="1" required placeholder="Enter requirement in tons" 
+                                       class="w-full px-4 py-3 rounded-xl input-field text-gray-700 font-medium">
+                            </div>
+                            
+                            <button type="button" id="pickNeedyLocation" class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-xl btn-primary">
+                                📍 Pick Location on Map
+                            </button>
+                            
+                            <div id="needyLocationStatus" class="px-4 py-3 rounded-xl text-center font-medium status-info">
+                                Click button above, then click on map to set location
+                            </div>
+                            
+                            <button type="submit" id="submitNeedy" disabled class="w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-xl btn-secondary opacity-50 cursor-not-allowed">
+                                ✅ Register Buyer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Live Matches Section -->
+            <div class="bg-white rounded-3xl shadow-2xl p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">🔗 Live AI Matches</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        Our AI algorithms automatically match suppliers with buyers based on location, product type, and capacity optimization
+                    </p>
+                </div>
+                
+                <div id="matchesList" class="space-y-4">
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Waiting for Matches</h3>
+                        <p class="text-gray-500">Add suppliers and buyers to see live AI-powered matches appear here!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+    <!-- <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen"> -->
+        <footer class="text-center text-gray-500 text-sm py-6">
+            © 2025 Walmart Sparkathon — All Rights Reserved 💙
+        </footer> 
+    <script>
+        // Initialize map centered on India
+        const map = L.map('map').setView([49.4174, 8.6845], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // State variables
+        let pickingMode = null;
+        let giverLocation = null;
+        let needyLocation = null;
+        let giverMarker = null;
+        let needyMarker = null;
+        let allMarkers = [];
+        let matchLines = [];
+        let givers = [];
+        let needies = [];
+        let matches = [];
+
+        // Map click handler
+        map.on('click', function(e) {
+            if (pickingMode === 'giver') {
+                giverLocation = e.latlng;
+                if (giverMarker) map.removeLayer(giverMarker);
+                giverMarker = L.marker([e.latlng.lat, e.latlng.lng], {
+                    icon: L.divIcon({
+                        className: 'giver-marker',
+                        html: '🏭',
+                        iconSize: [25, 25]
+                    })
+                }).addTo(map).bindPopup('📍 Supplier Location (Draft)');
+                
+                document.getElementById('giverLocationStatus').innerHTML = 
+                    `✅ Location set: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
+                document.getElementById('giverLocationStatus').className = 'px-4 py-3 rounded-xl text-center font-medium status-success';
+                document.getElementById('submitGiver').disabled = false;
+                document.getElementById('submitGiver').className = 'w-full px-6 py-3 bg-gradient-to-r from-green-500 to-teal-600 text-white font-bold rounded-xl btn-secondary';
+                pickingMode = null;
+                map.getContainer().style.cursor = '';
+                
+                document.getElementById('pickGiverLocation').textContent = '📍 Change Location';
+            } else if (pickingMode === 'needy') {
+                needyLocation = e.latlng;
+                if (needyMarker) map.removeLayer(needyMarker);
+                needyMarker = L.marker([e.latlng.lat, e.latlng.lng], {
+                    icon: L.divIcon({
+                        className: 'needy-marker',
+                        html: '🏬',
+                        iconSize: [25, 25]
+                    })
+                }).addTo(map).bindPopup('📍 Buyer Location (Draft)');
+                
+                document.getElementById('needyLocationStatus').innerHTML = 
+                    `✅ Location set: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
+                document.getElementById('needyLocationStatus').className = 'px-4 py-3 rounded-xl text-center font-medium status-success';
+                document.getElementById('submitNeedy').disabled = false;
+                document.getElementById('submitNeedy').className = 'w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-xl btn-secondary';
+                pickingMode = null;
+                map.getContainer().style.cursor = '';
+                
+                document.getElementById('pickNeedyLocation').textContent = '📍 Change Location';
+            }
+        });
+
+        // Location picker buttons
+        document.getElementById('pickGiverLocation').addEventListener('click', function() {
+            pickingMode = 'giver';
+            document.getElementById('giverLocationStatus').innerHTML = '🎯 Click anywhere on the map to set location';
+            document.getElementById('giverLocationStatus').className = 'px-4 py-3 rounded-xl text-center font-medium status-info';
+            map.getContainer().style.cursor = 'crosshair';
+        });
+
+        document.getElementById('pickNeedyLocation').addEventListener('click', function() {
+            pickingMode = 'needy';
+            document.getElementById('needyLocationStatus').innerHTML = '🎯 Click anywhere on the map to set location';
+            document.getElementById('needyLocationStatus').className = 'px-4 py-3 rounded-xl text-center font-medium status-info';
+            map.getContainer().style.cursor = 'crosshair';
+        });
+
+        // Form submissions
+        document.getElementById('giverForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!giverLocation) return;
+
+            const submitButton = document.getElementById('submitGiver');
+            submitButton.textContent = '⏳ Submitting...';
+            submitButton.disabled = true;
+
+            const data = {
+                id: Date.now(),
+                product: document.getElementById('giverProduct').value,
+                capacity: parseInt(document.getElementById('giverCapacity').value),
+                lat: giverLocation.lat,
+                lng: giverLocation.lng
+            };
+
+            // Simulate API call
+            setTimeout(() => {
+                givers.push(data);
+                
+                // Reset form
+                document.getElementById('giverForm').reset();
+                if (giverMarker) map.removeLayer(giverMarker);
+                giverLocation = null;
+                giverMarker = null;
+                submitButton.textContent = '✅ Register Supplier';
+                submitButton.disabled = true;
+                submitButton.className = 'w-full px-6 py-3 bg-gradient-to-r from-green-500 to-teal-600 text-white font-bold rounded-xl btn-secondary opacity-50 cursor-not-allowed';
+                document.getElementById('giverLocationStatus').innerHTML = 'Click button above, then click on map to set location';
+                document.getElementById('giverLocationStatus').className = 'px-4 py-3 rounded-xl text-center font-medium status-info';
+                document.getElementById('pickGiverLocation').textContent = '📍 Pick Location on Map';
+                
+                showNotification('✅ Supplier registered successfully!', 'success');
+                refreshData().catch(console.error);
+            }, 1000);
+        });
+
+        document.getElementById('needyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!needyLocation) return;
+
+            const submitButton = document.getElementById('submitNeedy');
+            submitButton.textContent = '⏳ Submitting...';
+            submitButton.disabled = true;
+
+            const data = {
+                id: Date.now(),
+                product: document.getElementById('needyProduct').value,
+                need: parseInt(document.getElementById('needyNeed').value),
+                lat: needyLocation.lat,
+                lng: needyLocation.lng
+            };
+
+            // Simulate API call
+            setTimeout(() => {
+                needies.push(data);
+                
+                // Reset form
+                document.getElementById('needyForm').reset();
+                if (needyMarker) map.removeLayer(needyMarker);
+                needyLocation = null;
+                needyMarker = null;
+                submitButton.textContent = '✅ Register Buyer';
+                submitButton.disabled = true;
+                submitButton.className = 'w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-xl btn-secondary opacity-50 cursor-not-allowed';
+                document.getElementById('needyLocationStatus').innerHTML = 'Click button above, then click on map to set location';
+                document.getElementById('needyLocationStatus').className = 'px-4 py-3 rounded-xl text-center font-medium status-info';
+                document.getElementById('pickNeedyLocation').textContent = '📍 Pick Location on Map';
+                
+                showNotification('✅ Buyer registered successfully!', 'success');
+                refreshData().catch(console.error);
+            }, 1000);
+        });
+
+        // Notification system
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-6 right-6 px-6 py-4 rounded-xl text-white font-semibold z-[60] notification`;
+            notification.textContent = message;
+            notification.style.background = type === 'success' ? 
+                'linear-gradient(135deg, #059669 0%, #047857 100%)' : 
+                'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
+            notification.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Calculate distance between two points
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Generate matches
+        function generateMatches() {
+            matches = [];
+            
+            givers.forEach(giver => {
+                needies.forEach(needy => {
+                    if (giver.product === needy.product) {
+                        const distance = calculateDistance(giver.lat, giver.lng, needy.lat, needy.lng);
+                        const coverage = Math.min(giver.capacity / needy.need, 1);
+                        
+                        matches.push({
+                            giver_id: giver.id,
+                            needy_id: needy.id,
+                            product: giver.product,
+                            giver_lat: giver.lat,
+                            giver_lng: giver.lng,
+                            needy_lat: needy.lat,
+                            needy_lng: needy.lng,
+                            distance: distance,
+                            coverage: coverage,
+                            type: coverage >= 1 ? 'full' : 'partial',
+                            capacity: giver.capacity,
+                            need: needy.need
+                        });
+                    }
+                });
+            });
+            
+            // Sort by distance
+            matches.sort((a, b) => a.distance - b.distance);
+        }
+
+        // Refresh data and update map
+        async function refreshData() {
+            // Clear existing markers and lines
+            allMarkers.forEach(marker => map.removeLayer(marker));
+            matchLines.forEach(control => map.removeLayer(control));
+            allMarkers = [];
+            matchLines = [];
+            
+            // Add giver markers
+            givers.forEach(giver => {
+                const marker = L.marker([giver.lat, giver.lng], {
+                    icon: L.divIcon({
+                        className: 'giver-marker',
+                        html: '🏭',
+                        iconSize: [25, 25]
+                    })
+                }).addTo(map);
+                
+                marker.bindPopup(`
+                    <div class="text-center p-2">
+                        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a11 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">🏭 Supplier</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Product:</span>
+                                <span class="font-semibold text-gray-800">${giver.product}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Capacity:</span>
+                                <span class="font-bold text-green-600">${giver.capacity} tons</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Status:</span>
+                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Available</span>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                allMarkers.push(marker);
+            });
+            
+            // Add needy markers
+            needies.forEach(needy => {
+                const marker = L.marker([needy.lat, needy.lng], {
+                    icon: L.divIcon({
+                        className: 'needy-marker',
+                        html: '🏬',
+                        iconSize: [25, 25]
+                    })
+                }).addTo(map);
+                
+                marker.bindPopup(`
+                    <div class="text-center p-2">
+                        <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">🏬 Buyer</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Product:</span>
+                                <span class="font-semibold text-gray-800">${needy.product}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Needed:</span>
+                                <span class="font-bold text-red-600">${needy.need} tons</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Status:</span>
+                                <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Seeking</span>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                allMarkers.push(marker);
+            });
+        
+            // Generate and display matches
+            generateMatches();
+            updateMatches();
+        }
+
+        // Update matches display
+        function updateMatches() {
+            const matchesList = document.getElementById('matchesList');
+            
+            if (matches.length === 0) {
+                matchesList.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Waiting for Matches</h3>
+                        <p class="text-gray-500">Add suppliers and buyers to see live AI-powered matches appear here!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            matchesList.innerHTML = matches.map((match, index) => {
+                const percentage = Math.round(match.coverage * 100);
+                const coverageText = match.type === 'full' ? 
+                    '✅ Full Coverage' : 
+                    `⚠️ ${percentage}% Coverage`;
+                
+                const productEmoji = getProductEmoji(match.product);
+                const distanceText = match.distance < 1 ? 
+                    `${Math.round(match.distance * 1000)}m` : 
+                    `${Math.round(match.distance)}km`;
+                
+                return `
+                    <div class="match-item match-${match.type} p-6 rounded-2xl shadow-lg cursor-pointer" data-match-index="${index}">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold">${productEmoji}</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">${match.product} Match</h4>
+                                    <p class="text-sm text-gray-600">${distanceText} apart</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-bold text-sm ${match.type === 'full' ? 'text-green-600' : 'text-orange-600'}">${coverageText}</div>
+                                <div class="text-xs text-gray-500 mt-1">Click to view details</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                                <span class="text-gray-600">Supply: ${match.capacity} tons</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                                <span class="text-gray-600">Demand: ${match.need} tons</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-700">Match Quality:</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full" style="width: ${percentage}%"></div>
+                                    </div>
+                                    <span class="text-sm font-bold text-gray-800">${percentage}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Add click handlers for matches
+            document.querySelectorAll('.match-item').forEach((item, index) => {
+                console.log("entering into drawing the line");
+                item.addEventListener('click', async() => {
+                    const match = matches[index];
+                    console.log(match);
+                    
+                    // Clear existing match lines
+                    matchLines.forEach(control => map.removeLayer(control));
+                    matchLines = [];
+                    
+                    // Draw highlighted path between giver and needy
+                    const color = match.type === 'full' ? '#10b981' : '#f59e0b';
+                    const start = [match.giver_lat, match.giver_lng];
+                    const end = [match.needy_lat, match.needy_lng];
+
+                    try{
+                        console.log("Request body", JSON.stringify({
+                            coordinates: [start, end],
+                            profile: 'driving-car'
+                        }));
+                        const response = await fetch('api/route', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                coordinates: [start, end],
+                                profile: 'driving-car'
+                            })
+                        });
+                        
+                        const data = await response.json();
+
+                        if(!data.success){
+                            throw new Error('Error in routing');
+                        }
+
+                        const coords = data.route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                        console.log(coords);
+
+                        const polyline = L.polyline(coords, {
+                            color: color,
+                            weight: 5,
+                            opacity: 0.9,
+                            lineCap: "round", 
+                            lineJoin: "round",
+                        }).addTo(map);
+
+                        matchLines.push(polyline);
+
+                        map.fitBounds(polyline.getBounds(), {padding: [50, 50]});
+                    
+
+                    } catch(err){
+                        console.error("Routing error", err);
+                        showNotification('Route could not be fetched', 'error');
+                    }
+                    
+                    
+                    // Add pulsing markers
+                    const startMarker = L.circleMarker([match.giver_lat, match.giver_lng], {
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: 0.6,
+                        radius: 10,
+                        className: 'animate-pulse'
+                    }).addTo(map);
+                    matchLines.push(startMarker);
+                    console.log(startMarker);
+                    console.log(matchLines);
+                    
+                    const endMarker = L.circleMarker([match.needy_lat, match.needy_lng], {
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: 0.6,
+                        radius: 10,
+                        className: 'animate-pulse'
+                    }).addTo(map);
+                    matchLines.push(endMarker);
+                    console.log(endMarker);
+                    console.log(matchLines);
+                    
+                    // Fit map to show both points
+                    const group = L.featureGroup([
+                        L.marker([match.giver_lat, match.giver_lng]),
+                        L.marker([match.needy_lat, match.needy_lng])
+                    ]);
+                    map.fitBounds(group.getBounds(), { padding: [50, 50] });
+                    
+                    // Show connection info
+                    const percentage = Math.round(match.coverage * 100);
+                    const distanceText = match.distance < 1 ? 
+                        `${Math.round(match.distance * 1000)}m` : 
+                        `${Math.round(match.distance)}km`;
+                    showNotification(`🔗 ${match.product} connection: ${percentage}% coverage, ${distanceText} distance`, 'success');
+                });
+            });
+        }
+
+        // Get emoji for products
+        function getProductEmoji(product) {
+            const emojis = {
+                'Wheat': '🌾',
+                'Rice': '🍚',
+                'Corn': '🌽',
+                'Soybeans': '🫘',
+                'Cotton': '🌱',
+                'Sugar': '🍯',
+                'Coffee': '☕',
+                'Tea': '🍃',
+                'Spices': '🌶️',
+                'Fruits': '🍎'
+            };
+            return emojis[product] || '📦';
+        }
+
+        // Initial data load
+        refreshData().catch(console.error);
+        
+        // Auto-refresh every 30 seconds to simulate real-time updates
+        setInterval(() => {
+            if (givers.length > 0 || needies.length > 0) {
+                refreshData().catch(console.error);
+                showNotification('🔄 Data refreshed automatically', 'info');
+            }
+        }, 30000);
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const mainContent = document.getElementById("main-content");
+            const overlay = document.getElementById("sidebar-overlay");
+            
+            const isOpen = !sidebar.classList.contains("-translate-x-full");
+            
+            if (isOpen) {
+                // Close sidebar
+                sidebar.classList.add("-translate-x-full");
+                overlay.classList.add("opacity-0", "pointer-events-none");
+                mainContent.classList.remove("ml-72");
+            } else {
+                // Open sidebar
+                sidebar.classList.remove("-translate-x-full");
+                overlay.classList.remove("opacity-0", "pointer-events-none");
+                mainContent.classList.add("ml-72");
+            }
+        }
+
+// Close sidebar when clicking overlay
+document.getElementById("sidebar-overlay").addEventListener("click", toggleSidebar);
+    </script>
+</body>
+</html>

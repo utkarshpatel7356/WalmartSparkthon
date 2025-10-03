@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Walmart AI Starter</title>
+<!-- 1) Include Tailwind via CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- 2) Your existing CSS (optional: can still override or add custom rules here) -->
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <header class="bg-white shadow-md p-6 mb-8 rounded-lg">
+    <!-- 3) Apply Tailwind utility classes directly -->
+    <h1 class="text-3xl font-extrabold text-blue-600">
+      Walmart AI Starter
+    </h1>
+  </header>
+<main class="max-w-2xl mx-auto space-y-4">
+  <p class="text-lg">
+    {{ message }}
+  </p>
+
+  <!-- Example card -->
+  <div class="bg-white rounded-xl shadow p-6">
+    <h2 class="text-xl font-semibold mb-2">Features</h2>
+    <ul class="list-disc list-inside space-y-1">
+      <li>Realtime inventory insights</li>
+      <li>Automated price‑delta alerts</li>
+      <li>AI‑powered image analysis</li>
+    </ul>
+  </div>
+  </main>
+
+</body>
+</html>

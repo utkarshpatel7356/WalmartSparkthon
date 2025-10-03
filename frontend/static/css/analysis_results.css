@@ -1,0 +1,457 @@
+/* Analysis Results Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+header h1 {
+    font-size: 2.2em;
+    font-weight: 700;
+}
+
+.back-link a {
+    color: rgba(255,255,255,0.9);
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 10px 20px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.back-link a:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.6);
+}
+
+/* Card Styles */
+.summary-card, .assessment-card, .observations-card, .reasoning-card {
+    margin: 30px;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    border-left: 5px solid #4CAF50;
+}
+
+.summary-card h2, .assessment-card h2, .observations-card h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.4em;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.summary-item .label {
+    font-weight: 600;
+    color: #666;
+    margin-right: 10px;
+    min-width: 60px;
+}
+
+.summary-item .value {
+    color: #333;
+    font-weight: 500;
+}
+
+.assessment-text {
+    font-size: 1.1em;
+    line-height: 1.7;
+    color: #444;
+    background: #f0f8f0;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #4CAF50;
+}
+
+.observations-list {
+    list-style: none;
+    padding: 0;
+}
+
+.observations-list li {
+    padding: 12px 20px;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #4CAF50;
+    position: relative;
+}
+
+.observations-list li::before {
+    content: "👁️";
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #4CAF50;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+/* Recommendations Section */
+.recommendations-section {
+    margin: 30px;
+}
+
+.recommendations-section h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.6em;
+    text-align: center;
+}
+
+.table-container {
+    overflow-x: auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.recommendations-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 0.95em;
+}
+
+.recommendations-table th {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    padding: 18px 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.recommendations-table th:first-child {
+    width: 60px;
+    text-align: center;
+}
+
+.recommendations-table th:nth-child(3),
+.recommendations-table th:nth-child(4) {
+    width: 120px;
+}
+
+.recommendation-row {
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s ease;
+}
+
+.recommendation-row:hover {
+    background: #f8f9fa;
+}
+
+.recommendation-row:last-child {
+    border-bottom: none;
+}
+
+.recommendations-table td {
+    padding: 20px 15px;
+    vertical-align: top;
+}
+
+.rank-cell {
+    text-align: center;
+}
+
+.rank-badge {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin: 0 auto;
+}
+
+.action-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9em;
+    text-align: center;
+    min-width: 150px;
+}
+
+.action-resell-at-discount {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+}
+
+.action-refurbish {
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+    color: white;
+}
+
+.action-recycle-material {
+    background: linear-gradient(135deg, #FF9800, #F57C00);
+    color: white;
+}
+
+.action-donate-to-charity {
+    background: linear-gradient(135deg, #E91E63, #C2185B);
+    color: white;
+}
+
+.action-dispose {
+    background: linear-gradient(135deg, #9E9E9E, #757575);
+    color: white;
+}
+
+.action-manual-review-required {
+    background: linear-gradient(135deg, #FFC107, #FF8F00);
+    color: white;
+}
+
+.confidence-score {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.confidence-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FF6B6B 0%, #FFE066 50%, #4CAF50 100%);
+    border-radius: 4px;
+    transition: width 0.8s ease;
+}
+
+.rationale-text {
+    line-height: 1.6;
+    color: #555;
+    margin: 0;
+}
+
+/* Reasoning Section */
+.reasoning-section {
+    margin: 30px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.reasoning-section h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.6em;
+    text-align: center;
+}
+
+.reasoning-card h3 {
+    color: #4CAF50;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+}
+
+.methodology-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.method-item {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    border-left: 4px solid #4CAF50;
+}
+
+.method-item h4 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.method-item p {
+    color: #666;
+    line-height: 1.6;
+    font-size: 0.95em;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1em;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    color: white;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #4CAF50;
+    border: 2px solid #4CAF50;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-outline:hover {
+    background: #4CAF50;
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        border-radius: 15px;
+    }
+    
+    header {
+        padding: 20px;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    header h1 {
+        font-size: 1.8em;
+    }
+    
+    .summary-card, .assessment-card, .observations-card, .reasoning-card, .recommendations-section {
+        margin: 20px 15px;
+    }
+    
+    .reasoning-section {
+        padding: 20px;
+    }
+    
+    .recommendations-table {
+        font-size: 0.85em;
+    }
+    
+    .recommendations-table th,
+    .recommendations-table td {
+        padding: 12px 8px;
+    }
+    
+    .action-badge {
+        min-width: auto;
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+    
+    .methodology-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+        margin: 20px 15px;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-container {
+        font-size: 0.8em;
+    }
+    
+    .recommendations-table th:nth-child(4) {
+        display: none;
+    }
+    
+    .confidence-bar-cell {
+        display: none;
+    }
+}

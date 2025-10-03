@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Walmart Social Impact Hub</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+   
+    .walmart-gradient {
+      background: linear-gradient(135deg, #004c91 0%, #0071ce 25%, #ffc220 100%);
+    }
+    
+    .sidebar-gradient {
+      background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%);
+    }
+    
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    .nav-item {
+      transition: all 0.2s ease;
+    }
+    
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+    
+    .walmart-badge {
+      background: linear-gradient(45deg, #ffc220, #ffed4a);
+      color: #1a202c;
+    }
+    
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Map and donation specific styles */
+    #map { height: 400px; }
+    
+    .notification {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 400px;
+    }
+    
+    .glow-button {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .glow-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .section-divider {
+      background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+      height: 1px;
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+  <div class="flex h-screen">
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar-gradient w-72 p-6 fixed top-0 left-0 h-full shadow-2xl transform -translate-x-full transition-all duration-300 z-50">
+      <!-- Brand Header -->
+      <div class="flex items-center mb-8 pb-6 border-b border-white/20">
+        <div class="walmart-badge px-4 py-2 rounded-full font-bold text-lg mr-3">
+          W
+        </div>
+        <div>
+          <h2 class="text-white font-bold text-xl">Walmart</h2>
+          <p class="text-blue-200 text-sm">Sparkathon 2025</p>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="space-y-2">
+        <a href="/map" class="nav-item flex items-center px-4 py-3 text-yellow-300 bg-white/10 rounded-lg">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </svg>
+          Social Impact
+        </a>
+        
+        <!-- Add other navigation items here -->
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content" class="flex-1 flex flex-col transition-all duration-300">
+      <!-- Header -->
+      <header class="glass-effect shadow-lg p-6 flex items-center justify-between border-b border-white/20">
+        <div class="flex items-center">
+          <button id="menu-btn" onclick="toggleSidebar()" class="text-2xl text-gray-700 hover:text-blue-600 transition-colors mr-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+          <div class="walmart-gradient text-transparent bg-clip-text">
+            <h1 class="text-2xl font-bold">Social Impact Hub</h1>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <button class="relative p-2 text-gray-600 hover:text-blue-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="flex-1 overflow-auto p-6">
+        <!-- Mode Selection -->
+        <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-8">
+          <div class="card-hover">
+            <button id="donateMode" class="w-full p-6 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl shadow-lg glow-button">
+              <h3 class="text-xl font-bold mb-2">I Want to Donate</h3>
+              <p class="text-green-100 text-sm">Share your resources with those who need them</p>
+            </button>
+          </div>
+          
+          <div class="card-hover">
+            <button id="needMode" class="w-full p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl shadow-lg glow-button">
+              <h3 class="text-xl font-bold mb-2">I Need Help</h3>
+              <p class="text-blue-100 text-sm">Connect with generous donors in your community</p>
+            </button>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Map Section -->
+        <div class="glass-card rounded-2xl p-6 shadow-xl mb-8">
+          <div class="flex flex-wrap gap-4 mb-6 justify-between items-center">
+            <div class="flex gap-2">
+              <button id="clearBtn" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors">
+                🗑️ Clear Map
+              </button>
+              <select id="profileSelect" class="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500">
+                <option value="driving-car">🚗 Driving</option>
+                <option value="foot-walking">🚶 Walking</option>
+                <option value="cycling-regular">🚴 Cycling</option>
+                <option value="driving-hgv">🚚 Truck</option>
+              </select>
+            </div>
+            <div class="flex gap-4 text-sm">
+              <div class="flex items-center gap-1">
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span>Donations</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span>Needs</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                <span>Selected</span>
+              </div>
+            </div>
+          </div>
+          
+          <div id="map" class="rounded-xl overflow-hidden shadow-inner"></div>
+        </div>
+
+        <!-- Forms Container -->
+        <div class="max-w-4xl mx-auto">
+          <!-- Donation Form -->
+          <div id="donationForm" class="glass-card rounded-2xl p-8 shadow-xl">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <span class="text-2xl">🎁</span>
+              </div>
+              <div>
+                <h3 class="text-2xl font-bold text-gray-800">Donate Items</h3>
+                <p class="text-gray-600">Share what you have with those in need</p>
+              </div>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Item Type</label>
+                <select id="donationItem" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                  <option value="">Select Item</option>
+                  <option value="food">🍞 Food</option>
+                  <option value="clothes">👕 Clothes</option>
+                  <option value="books">📚 Books</option>
+                  <option value="medicine">💊 Medicine</option>
+                  <option value="toys">🧸 Toys</option>
+                  <option value="electronics">📱 Electronics</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                <input id="donationQuantity" type="number" placeholder="How many?" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" min="1">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Your Name (Optional)</label>
+                <input id="donorName" type="text" placeholder="Anonymous" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+              </div>
+            </div>
+            
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+              <p class="text-green-800 text-sm font-medium">📍 Click on the map above to select your pickup location</p>
+            </div>
+            
+            <button id="submitDonation" class="w-full py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold text-lg glow-button disabled:opacity-50" disabled>
+              🚀 Submit Donation
+            </button>
+          </div>
+
+          <!-- Need Form -->
+          <div id="needForm" class="glass-card rounded-2xl p-8 shadow-xl hidden">
+            <!-- Similar structure to donation form but with blue colors -->
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <span class="text-2xl">🙏</span>
+              </div>
+              <div>
+                <h3 class="text-2xl font-bold text-gray-800">Request Help</h3>
+                <p class="text-gray-600">Let others know what you need</p>
+              </div>
+            </div>
+            
+            <!-- Add similar form structure here -->
+          </div>
+        </div>
+
+        <!-- Route Information -->
+        <div id="routeInfo" class="glass-card rounded-2xl p-6 shadow-xl mb-8 hidden max-w-4xl mx-auto">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+              <span class="text-xl">🗺️</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800">Route Information</h3>
+          </div>
+          
+          <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="bg-white p-4 rounded-lg">
+              <p class="text-sm text-gray-600 mb-1">Distance</p>
+              <p class="text-lg font-semibold text-gray-800" id="distance">-</p>
+            </div>
+            <!-- Add other route info cards -->
+          </div>
+        </div>
+
+        <!-- Matches Container -->
+        <div id="matchesContainer" class="hidden max-w-4xl mx-auto">
+          <div class="glass-card rounded-2xl p-8 shadow-xl">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                <span class="text-2xl">🎯</span>
+              </div>
+              <div>
+                <h3 class="text-2xl font-bold text-gray-800">Perfect Matches Found</h3>
+                <p class="text-gray-600">Connect with people who need exactly what you're offering</p>
+              </div>
+            </div>
+            
+            <div id="matchesList" class="space-y-4"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <script>
+    // Dashboard Functions
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const mainContent = document.getElementById("main-content");
+      const overlay = document.getElementById("sidebar-overlay");
+      
+      sidebar.classList.toggle("-translate-x-full");
+      overlay.classList.toggle("opacity-0");
+      overlay.classList.toggle("pointer-events-none");
+      
+      if (sidebar.classList.contains("-translate-x-full")) {
+        mainContent.classList.remove("ml-72");
+      } else {
+        mainContent.classList.add("ml-72");
+      }
+    }
+
+    // Close sidebar when clicking overlay
+    document.getElementById("sidebar-overlay").addEventListener("click", toggleSidebar);
+
+    // Map and Supply-Demand System Variables
+    let map;
+    let currentMode = 'giver';
+    let selectedLocation = null;
+    let locationMarker = null;
+    let giverMarkers = [];
+    let needyMarkers = [];
+    let matchLines = [];
+    let currentData = { givers: [], needies: [], matches: [] };
+
+    // Initialize map
+    function initializeMap() {
+      map = L.map('map').setView([20.5937, 78.9629], 5); // India center
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+      
+      // Add click handler for location selection
+      map.on('click', function(e) {
+        selectLocation(e.latlng.lat, e.latlng.lng);
+      });
+    }
+
+    // Location selection
+    function selectLocation(lat, lng) {
+      selectedLocation = { lat, lng };
+      
+      // Remove previous location marker
+      if (locationMarker) {
+        map.removeLayer(locationMarker);
+      }
+      
+      // Add new location marker
+      locationMarker = L.marker([lat, lng], {
+        icon: L.icon({
+          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        })
+      }).addTo(map);
+      
+      // Update form coordinates
+      if (currentMode === 'giver') {
+        document.getElementById('giverLat').value = lat.toFixed(6);
+        document.getElementById('giverLng').value = lng.toFixed(6);
+      } else {
+        document.getElementById('needyLat').value = lat.toFixed(6);
+        document.getElementById('needyLng').value = lng.toFixed(6);
+      }
+      
+      showNotification('Location selected! Coordinates updated in form.', 'success');
+    }
+
+    // Mode switching
+    function switchMode(mode) {
+      currentMode = mode;
+      const giverBtn = document.getElementById('giverMode');
+      const needyBtn = document.getElementById('needyMode');
+      const giverForm = document.getElementById('giverForm');
+      const needyForm = document.getElementById('needyForm');
+      
+      if (mode === 'giver') {
+        giverBtn.classList.add('bg-blue-600', 'text-white');
+        giverBtn.classList.remove('bg-gray-200', 'text-gray-700');
+        needyBtn.classList.add('bg-gray-200', 'text-gray-700');
+        needyBtn.classList.remove('bg-blue-600', 'text-white');
+        
+        giverForm.classList.remove('hidden');
+        needyForm.classList.add('hidden');
+      } else {
+        needyBtn.classList.add('bg-blue-600', 'text-white');
+        needyBtn.classList.remove('bg-gray-200', 'text-gray-700');
+        giverBtn.classList.add('bg-gray-200', 'text-gray-700');
+        giverBtn.classList.remove('bg-blue-600', 'text-white');
+        
+        needyForm.classList.remove('hidden');
+        giverForm.classList.add('hidden');
+      }
+      
+      // Clear location selection when switching modes
+      if (locationMarker) {
+        map.removeLayer(locationMarker);
+        locationMarker = null;
+        selectedLocation = null;
+      }
+    }
+
+    // Form validation
+    function validateGiverForm() {
+      const product = document.getElementById('giverProduct').value.trim();
+      const capacity = parseInt(document.getElementById('giverCapacity').value);
+      const lat = parseFloat(document.getElementById('giverLat').value);
+      const lng = parseFloat(document.getElementById('giverLng').value);
+      
+      if (!product) {
+        showNotification('Please enter a product name.', 'error');
+        return false;
+      }
+      
+      if (!capacity || capacity <= 0) {
+        showNotification('Please enter a valid capacity greater than 0.', 'error');
+        return false;
+      }
+      
+      if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        showNotification('Please select a valid location on the map.', 'error');
+        return false;
+      }
+      
+      return true;
+    }
+
+    function validateNeedyForm() {
+      const product = document.getElementById('needyProduct').value.trim();
+      const need = parseInt(document.getElementById('needyNeed').value);
+      const lat = parseFloat(document.getElementById('needyLat').value);
+      const lng = parseFloat(document.getElementById('needyLng').value);
+      
+      if (!product) {
+        showNotification('Please enter a product name.', 'error');
+        return false;
+      }
+      
+      if (!need || need <= 0) {
+        showNotification('Please enter a valid need greater than 0.', 'error');
+        return false;
+      }
+      
+      if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        showNotification('Please select a valid location on the map.', 'error');
+        return false;
+      }
+      
+      return true;
+    }
+
+    // Submit giver form
+    async function submitGiver() {
+      if (!validateGiverForm()) return;
+      
+      const giverData = {
+        product: document.getElementById('giverProduct').value.trim(),
+        capacity: parseInt(document.getElementById('giverCapacity').value),
+        lat: parseFloat(document.getElementById('giverLat').value),
+        lng: parseFloat(document.getElementById('giverLng').value)
+      };
+      
+      try {
+        const response = await fetch('/api/givers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(giverData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          showNotification('Giver registered successfully!', 'success');
+          document.getElementById('giverFormElement').reset();
+          
+          // Clear location marker
+          if (locationMarker) {
+            map.removeLayer(locationMarker);
+            locationMarker = null;
+            selectedLocation = null;
+          }
+          
+          // Refresh data and map
+          await loadAllData();
+        } else {
+          showNotification(result.detail || 'Error registering giver', 'error');
+        }
+      } catch (error) {
+        showNotification('Network error. Please try again.', 'error');
+        console.error('Error:', error);
+      }
+    }
+
+    // Submit needy form
+    async function submitNeedy() {
+      if (!validateNeedyForm()) return;
+      
+      const needyData = {
+        product: document.getElementById('needyProduct').value.trim(),
+        need: parseInt(document.getElementById('needyNeed').value),
+        lat: parseFloat(document.getElementById('needyLat').value),
+        lng: parseFloat(document.getElementById('needyLng').value)
+      };
+      
+      try {
+        const response = await fetch('/api/needies', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(needyData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          showNotification('Needy registered successfully!', 'success');
+          document.getElementById('needyFormElement').reset();
+          
+          // Clear location marker
+          if (locationMarker) {
+            map.removeLayer(locationMarker);
+            locationMarker = null;
+            selectedLocation = null;
+          }
+          
+          // Refresh data and map
+          await loadAllData();
+        } else {
+          showNotification(result.detail || 'Error registering needy', 'error');
+        }
+      } catch (error) {
+        showNotification('Network error. Please try again.', 'error');
+        console.error('Error:', error);
+      }
+    }
+
+    // Load all data from API
+    async function loadAllData() {
+      try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        
+        if (response.ok) {
+          currentData = data;
+          updateMap();
+          updateStatistics();
+          updateMatchList();
+        } else {
+          showNotification('Error loading data', 'error');
+        }
+      } catch (error) {
+        showNotification('Network error loading data', 'error');
+        console.error('Error:', error);
+      }
+    }
+
+    // Update map with markers and matches
+    function updateMap() {
+      // Clear existing markers and lines
+      giverMarkers.forEach(marker => map.removeLayer(marker));
+      needyMarkers.forEach(marker => map.removeLayer(marker));
+      matchLines.forEach(line => map.removeLayer(line));
+      
+      giverMarkers = [];
+      needyMarkers = [];
+      matchLines = [];
+      
+      // Add giver markers (green)
+      currentData.givers.forEach(giver => {
+        const marker = L.marker([giver.lat, giver.lng], {
+          icon: L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          })
+        }).addTo(map);
+        
+        marker.bindPopup(`
+          <div class="p-2">
+            <h3 class="font-bold text-green-700">Supplier</h3>
+            <p><strong>Product:</strong> ${giver.product}</p>
+            <p><strong>Capacity:</strong> ${giver.capacity}</p>
+            <p><strong>Location:</strong> ${giver.lat.toFixed(4)}, ${giver.lng.toFixed(4)}</p>
+            <button onclick="removeGiver('${giver.id}')" class="mt-2 bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600">
+              Remove
+            </button>
+          </div>
+        `);
+        
+        giverMarkers.push(marker);
+      });
+      
+      // Add needy markers (blue)
+      currentData.needies.forEach(needy => {
+        const marker = L.marker([needy.lat, needy.lng], {
+          icon: L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          })
+        }).addTo(map);
+        
+        marker.bindPopup(`
+          <div class="p-2">
+            <h3 class="font-bold text-blue-700">Requester</h3>
+            <p><strong>Product:</strong> ${needy.product}</p>
+            <p><strong>Need:</strong> ${needy.need}</p>
+            <p><strong>Location:</strong> ${needy.lat.toFixed(4)}, ${needy.lng.toFixed(4)}</p>
+            <button onclick="removeNeedy('${needy.id}')" class="mt-2 bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600">
+              Remove
+            </button>
+          </div>
+        `);
+        
+        needyMarkers.push(marker);
+      });
+      
+      // Add match lines
+      if (document.getElementById('showMatches').checked) {
+        currentData.matches.forEach(match => {
+          const color = match.type === 'full' ? '#10b981' : '#f59e0b';
+          const weight = match.type === 'full' ? 3 : 2;
+          const opacity = match.type === 'full' ? 0.8 : 0.6;
+          
+          const line = L.polyline([
+            [match.giver_lat, match.giver_lng],
+            [match.needy_lat, match.needy_lng]
+          ], {
+            color: color,
+            weight: weight,
+            opacity: opacity
+          }).addTo(map);
+          
+          line.bindPopup(`
+            <div class="p-2">
+              <h3 class="font-bold">${match.type === 'full' ? 'Full Match' : 'Partial Match'}</h3>
+              <p><strong>Product:</strong> ${match.product}</p>
+              <p><strong>Coverage:</strong> ${(match.coverage * 100).toFixed(1)}%</p>
+              <p><strong>Distance:</strong> ${match.distance.toFixed(2)} units</p>
+              <p><strong>Supply:</strong> ${match.giver_capacity}</p>
+              <p><strong>Demand:</strong> ${match.needy_need}</p>
+            </div>
+          `);
+          
+          matchLines.push(line);
+        });
+      }
+    }
+
+    // Update statistics display
+    function updateStatistics() {
+      const stats = currentData.summary || {};
+      
+      document.getElementById('totalGivers').textContent = stats.total_givers || 0;
+      document.getElementById('totalNeedies').textContent = stats.total_needies || 0;
+      document.getElementById('totalMatches').textContent = stats.total_matches || 0;
+      document.getElementById('fullMatches').textContent = stats.full_matches || 0;
+    }
+
+    // Update match list
+    function updateMatchList() {
+      const matchList = document.getElementById('matchList');
+      matchList.innerHTML = '';
+      
+      if (currentData.matches.length === 0) {
+        matchList.innerHTML = '<p class="text-gray-500 text-center py-4">No matches found</p>';
+        return;
+      }
+      
+      currentData.matches.slice(0, 5).forEach(match => {
+        const matchElement = document.createElement('div');
+        matchElement.className = `p-3 border rounded-lg ${match.type === 'full' ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`;
+        
+        matchElement.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <h4 class="font-semibold text-sm">${match.product}</h4>
+              <p class="text-xs text-gray-600">${(match.coverage * 100).toFixed(1)}% coverage</p>
+            </div>
+            <span class="text-xs px-2 py-1 rounded ${match.type === 'full' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+              ${match.type}
+            </span>
+          </div>
+          <div class="mt-2 text-xs text-gray-500">
+            Distance: ${match.distance.toFixed(2)} units
+          </div>
+        `;
+        
+        matchList.appendChild(matchElement);
+      });
+    }
+
+    // Remove giver
+    async function removeGiver(giverId) {
+      try {
+        const response = await fetch(`/api/givers/${giverId}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          showNotification('Giver removed successfully', 'success');
+          await loadAllData();
+        } else {
+          showNotification('Error removing giver', 'error');
+        }
+      } catch (error) {
+        showNotification('Network error', 'error');
+        console.error('Error:', error);
+      }
+    }
+
+    // Remove needy
+    async function removeNeedy(needyId) {
+      try {
+        const response = await fetch(`/api/needies/${needyId}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          showNotification('Needy removed successfully', 'success');
+          await loadAllData();
+        } else {
+          showNotification('Error removing needy', 'error');
+        }
+      } catch (error) {
+        showNotification('Network error', 'error');
+        console.error('Error:', error);
+      }
+    }
+
+    // Clear all data
+    async function clearAllData() {
+      if (!confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/clear', {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          showNotification('All data cleared successfully', 'success');
+          await loadAllData();
+        } else {
+          showNotification('Error clearing data', 'error');
+        }
+      } catch (error) {
+        showNotification('Network error', 'error');
+        console.error('Error:', error);
+      }
+    }
+
+    // Toggle match lines
+    function toggleMatches() {
+      updateMap();
+    }
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+      const notification = document.getElementById('notification');
+      const notificationMessage = document.getElementById('notificationMessage');
+      
+      notificationMessage.textContent = message;
+      
+      // Reset classes
+      notification.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full';
+      
+      // Add type-specific classes
+      if (type === 'success') {
+        notification.classList.add('bg-green-500', 'text-white');
+      } else if (type === 'error') {
+        notification.classList.add('bg-red-500', 'text-white');
+      } else {
+        notification.classList.add('bg-blue-500', 'text-white');
+      }
+      
+      // Show notification
+      setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+      }, 100);
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        notification.classList.add('translate-x-full');
+      }, 3000);
+    }
+
+    // Get current location
+    function getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            map.setView([lat, lng], 13);
+            selectLocation(lat, lng);
+            
+            showNotification('Current location detected!', 'success');
+          },
+          function() {
+            showNotification('Unable to retrieve your location', 'error');
+          }
+        );
+      } else {
+        showNotification('Geolocation is not supported by this browser', 'error');
+      }
+    }
+
+    // Auto-refresh data
+    let autoRefreshInterval;
+    
+    function toggleAutoRefresh() {
+      const checkbox = document.getElementById('autoRefresh');
+      
+      if (checkbox.checked) {
+        autoRefreshInterval = setInterval(loadAllData, 30000); // Refresh every 30 seconds
+        showNotification('Auto-refresh enabled (30s interval)', 'info');
+      } else {
+        clearInterval(autoRefreshInterval);
+        showNotification('Auto-refresh disabled', 'info');
+      }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      loadAllData();
+      
+      // Set up event listeners
+      document.getElementById('giverMode').addEventListener('click', () => switchMode('giver'));
+      document.getElementById('needyMode').addEventListener('click', () => switchMode('needy'));
+      document.getElementById('showMatches').addEventListener('change', toggleMatches);
+      document.getElementById('autoRefresh').addEventListener('change', toggleAutoRefresh);
+      
+      // Initialize with giver mode
+      switchMode('giver');
+    });
+</script>
+</body>
+</html>

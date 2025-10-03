@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Dashboard | Supply Chain Management</title>
+    <link rel="stylesheet" href="/static/css/inventory.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <!-- Notification Banner -->
+    <div id="notification-banner" class="notification-banner">
+        <div class="notification-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Fast-rising demand detected for Electronics & Home Goods categories</span>
+            <button class="notification-close" onclick="closeNotification()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-cube"></i>
+                <span>SupplyChain Pro</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/inventory" class="nav-link active">Inventory</a></li>
+                <li><a href="/perishables" class="nav-link">Perishables</a></li>
+                <li><a href="/circular" class="nav-link">Circular</a></li>
+                <li><a href="/sentiment" class="nav-link">Sentiment</a></li>
+                <li><a href="/logistics" class="nav-link">Logistics</a></li>
+                <li><a href="/sourcing" class="nav-link">Sourcing</a></li>
+                <li><a href="/carbon" class="nav-link">Carbon</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Inventory Dashboard</h1>
+            <p class="hero-subtitle">Real-time inventory monitoring and demand forecasting</p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number">1,247</div>
+                    <div class="stat-label">Total SKUs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">87.3%</div>
+                    <div class="stat-label">Fill Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">23</div>
+                    <div class="stat-label">Low Stock</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$2.4M</div>
+                    <div class="stat-label">Total Value</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-background"></div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Charts Section -->
+        <section class="charts-section">
+            <div class="container">
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Current Stock Levels</h3>
+                            <div class="chart-controls">
+                                <select id="stockPeriod">
+                                    <option value="week">This Week</option>
+                                    <option value="month" selected>This Month</option>
+                                    <option value="quarter">This Quarter</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="stockChart"></canvas>
+                        </div>
+                        <div class="chart-summary">
+                            <div class="summary-item">
+                                <span class="summary-label">Total Items:</span>
+                                <span class="summary-value">45,678</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Avg. Stock:</span>
+                                <span class="summary-value">387 units</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Predicted Demand</h3>
+                            <div class="chart-controls">
+                                <select id="demandPeriod">
+                                    <option value="week">Next Week</option>
+                                    <option value="month" selected>Next Month</option>
+                                    <option value="quarter">Next Quarter</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="demandChart"></canvas>
+                        </div>
+                        <div class="chart-summary">
+                            <div class="summary-item">
+                                <span class="summary-label">Predicted Sales:</span>
+                                <span class="summary-value">38,945 units</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Confidence:</span>
+                                <span class="summary-value">94.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inventory Table Section -->
+        <section class="table-section">
+            <div class="container">
+                <div class="table-header">
+                    <h2>Inventory Overview</h2>
+                    <div class="table-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search SKUs...">
+                        </div>
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Home & Garden">Home & Garden</option>
+                            <option value="Sports">Sports</option>
+                        </select>
+                        <button class="export-btn">
+                            <i class="fas fa-download"></i>
+                            Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Current Stock</th>
+                                <th>Reorder Point</th>
+                                <th>Reorder Alert</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <tr>
+                                <td><span class="sku-code">SKU-001</span></td>
+                                <td>Wireless Bluetooth Headphones</td>
+                                <td><span class="category-tag electronics">Electronics</span></td>
+                                <td><span class="stock-level low">45</span></td>
+                                <td>50</td>
+                                <td><span class="alert-badge critical">Yes</span></td>
+                                <td>2024-06-09 10:30</td>
+                                <td>
+                                    <button class="action-btn details-btn" onclick="viewDetails('SKU-001')">
+                                        <i class="fas fa-eye"></i>
+                                        Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="sku-code">SKU-002</span></td>
+                                <td>Cotton T-Shirt - Black</td>
+                                <td><span class="category-tag clothing">Clothing</span></td>
+                                <td><span class="stock-level good">156</span></td>
+                                <td>75</td>
+                                <td><span class="alert-badge safe">No</span></td>
+                                <td>2024-06-09 09:15</td>
+                                <td>
+                                    <button class="action-btn details-btn" onclick="viewDetails('SKU-002')">
+                                        <i class="fas fa-eye"></i>
+                                        Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="sku-code">SKU-003</span></td>
+                                <td>Garden Watering Can</td>
+                                <td><span class="category-tag home-garden">Home & Garden</span></td>
+                                <td><span class="stock-level medium">89</span></td>
+                                <td>60</td>
+                                <td><span class="alert-badge safe">No</span></td>
+                                <td>2024-06-09 08:45</td>
+                                <td>
+                                    <button class="action-btn details-btn" onclick="viewDetails('SKU-003')">
+                                        <i class="fas fa-eye"></i>
+                                        Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="sku-code">SKU-004</span></td>
+                                <td>Yoga Mat - Premium</td>
+                                <td><span class="category-tag sports">Sports</span></td>
+                                <td><span class="stock-level low">22</span></td>
+                                <td>30</td>
+                                <td><span class="alert-badge critical">Yes</span></td>
+                                <td>2024-06-09 11:20</td>
+                                <td>
+                                    <button class="action-btn details-btn" onclick="viewDetails('SKU-004')">
+                                        <i class="fas fa-eye"></i>
+                                        Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="sku-code">SKU-005</span></td>
+                                <td>Smartphone Case - Clear</td>
+                                <td><span class="category-tag electronics">Electronics</span></td>
+                                <td><span class="stock-level good">234</span></td>
+                                <td>100</td>
+                                <td><span class="alert-badge safe">No</span></td>
+                                <td>2024-06-09 07:30</td>
+                                <td>
+                                    <button class="action-btn details-btn" onclick="viewDetails('SKU-005')">
+                                        <i class="fas fa-eye"></i>
+                                        Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="sku-code">SKU-006</span></td>
+                                <td>Kitchen Knife Set</td>
+                                <td><span class="category-tag home-garden">Home & Garden</span></td>
+                                <td><span class="stock-level medium">67</span></td>
+                                <td>40</td>
+                                <td><span class="alert-badge safe">No</span></td>
+                                <td>2024-06-09 12:10</td>
+                                <td>
+                                    <button class="action-btn details-btn" onclick="viewDetails('SKU-006')">
+                                        <i class="fas fa-eye"></i>
+                                        Details
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-pagination">
+                    <div class="pagination-info">
+                        Showing 1-6 of 1,247 items
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="pagination-pages">
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn">2</button>
+                            <button class="pagination-btn">3</button>
+                            <span>...</span>
+                            <button class="pagination-btn">208</button>
+                        </span>
+                        <button class="pagination-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 SupplyChain Pro. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/static/js/inventory.js"></script>
+</body>
+</html>

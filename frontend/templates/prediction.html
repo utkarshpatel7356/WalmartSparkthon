@@ -1,0 +1,588 @@
+{% extends "base.html" %}
+
+{% block title %}Intelligence Dashboard - Walmart Sparkathon{% endblock %}
+
+{% block header %}Walmart Intelligence Hub{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  
+  <!-- Hero Section -->
+  <div class="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-blue-600 rounded-3xl p-8 mb-8 shadow-2xl">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="relative z-10 text-center">
+      <div class="inline-flex items-center bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-sm mb-4">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        INTELLIGENCE SYSTEM
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+        Smart <span class="text-yellow-400">Business</span> Intelligence
+      </h1>
+      <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+        AI-powered predictions for demand forecasting, acquisition planning, and dynamic pricing optimization
+      </p>
+    </div>
+    <div class="absolute top-4 right-4 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl"></div>
+    <div class="absolute bottom-4 left-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+  </div>
+
+  <!-- Navigation Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="relative group cursor-pointer" data-section="demand">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <h2 class="text-xl font-semibold mb-2 text-blue-700">📊 Demand Forecasting</h2>
+        <p class="text-gray-600">Predict how much a product will sell using smart ML models.</p>
+      </div>
+    </div>
+    
+    <div class="relative group cursor-pointer" data-section="acquisition">
+      <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-green-600 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+        </div>
+        <h2 class="text-xl font-semibold mb-2 text-green-700">📦 Acquisition Predictor</h2>
+        <p class="text-gray-600">Get the right quantity to purchase based on multiple factors.</p>
+      </div>
+    </div>
+    
+    <div class="relative group cursor-pointer" data-section="pricing">
+      <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-600 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+        <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+          </svg>
+        </div>
+        <h2 class="text-xl font-semibold mb-2 text-purple-700">💰 Smart Price Delta</h2>
+        <p class="text-gray-600">Know when to increase or decrease prices to stay competitive.</p>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Demand Forecasting Section -->
+  <section id="demand-section" class="section-content">
+    <div class="relative group mb-8">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative bg-white rounded-2xl p-8 shadow-lg">
+        <h2 class="text-2xl font-semibold mb-6 text-center">📊 Demand Forecasting</h2>
+        
+        <form id="demand-form" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="demand-location" class="block text-sm font-medium text-gray-700 mb-2">📍 Location:</label>
+              <select id="demand-location" name="location" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Kolkata">Kolkata</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="demand-weather" class="block text-sm font-medium text-gray-700 mb-2">🌤️ Weather:</label>
+              <select id="demand-weather" name="weather" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                <option value="Sunny">☀️ Sunny</option>
+                <option value="Rainy">🌧️ Rainy</option>
+                <option value="Cloudy">☁️ Cloudy</option>
+                <option value="Humid">💧 Humid</option>
+                <option value="Dry">🌵 Dry</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="demand-product-name" class="block text-sm font-medium text-gray-700 mb-2">🏷️ Product:</label>
+              <select id="demand-product-name" name="product_name" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                {% for i in range(21) %}
+                <option value="Product_{{ i }}">Product {{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            
+            <div>
+              <label for="demand-category" class="block text-sm font-medium text-gray-700 mb-2">📦 Category:</label>
+              <select id="demand-category" name="category" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                <option value="Fresh Produce">🥬 Fresh Produce</option>
+                <option value="Beverages">🥤 Beverages</option>
+                <option value="Personal Care">🧴 Personal Care</option>
+                <option value="Household">🏠 Household</option>
+                <option value="Packaged Food">📦 Packaged Food</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="demand-stock-level" class="block text-sm font-medium text-gray-700 mb-2">📊 Stock Level:</label>
+              <input type="number" id="demand-stock-level" name="stock_level" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div>
+              <label for="demand-competitor-price" class="block text-sm font-medium text-gray-700 mb-2">💰 Competitor Price:</label>
+              <input type="number" step="0.01" id="demand-competitor-price" name="competitor_price" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div>
+              <label for="demand-base-price" class="block text-sm font-medium text-gray-700 mb-2">💵 Base Price:</label>
+              <input type="number" step="0.01" id="demand-base-price" name="base_price" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div>
+              <label for="demand-shelf-life" class="block text-sm font-medium text-gray-700 mb-2">📅 Shelf Life (days):</label>
+              <input type="number" id="demand-shelf-life" name="shelf_life_days" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            </div>
+          </div>
+          
+          <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all shadow-lg">
+            <span class="flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+              Predict Demand
+            </span>
+          </button>
+        </form>
+
+        <div id="demand-result" class="mt-8 p-6 bg-gradient-to-r from-green-50 to-teal-50 border border-green-200 rounded-xl hidden">
+          <div class="flex items-center justify-center">
+            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-green-800">Predicted Demand</h3>
+              <p class="text-2xl font-bold text-green-600" id="demand-prediction">--</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="demand-error" class="mt-8 p-6 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl hidden">
+          <div class="flex items-center justify-center">
+            <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-red-800">Error</h3>
+              <p class="text-red-600" id="demand-error-message">--</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Acquisition Predictor Section -->
+  <section id="acquisition-section" class="section-content hidden">
+    <div class="relative group mb-8">
+      <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-teal-500 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative bg-white rounded-2xl p-8 shadow-lg">
+        <h2 class="text-2xl font-semibold mb-6 text-center">📦 Acquisition Quantity Predictor</h2>
+        
+        <form id="acquisition-form" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="acquisition-demand" class="block text-sm font-medium text-gray-700 mb-2">📈 Predicted Demand:</label>
+              <input type="number" id="acquisition-demand" name="demand" step="0.01" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div>
+              <label for="acquisition-stock-level" class="block text-sm font-medium text-gray-700 mb-2">📊 Current Stock Level:</label>
+              <input type="number" id="acquisition-stock-level" name="stock_level" step="0.01" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div>
+              <label for="acquisition-shelf-life" class="block text-sm font-medium text-gray-700 mb-2">📅 Shelf Life (days):</label>
+              <input type="number" id="acquisition-shelf-life" name="shelf_life_days" step="0.1" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div>
+              <label for="acquisition-price" class="block text-sm font-medium text-gray-700 mb-2">💰 Price Per Unit:</label>
+              <input type="number" id="acquisition-price" name="price" step="0.01" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div class="md:col-span-2">
+              <label for="acquisition-spoilage-cost" class="block text-sm font-medium text-gray-700 mb-2">⚠️ Spoilage Cost Per Unit:</label>
+              <input type="number" id="acquisition-spoilage-cost" name="spoilage_cost" step="0.01" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+            </div>
+          </div>
+          
+          <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-teal-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-green-700 hover:to-teal-700 transform hover:scale-105 transition-all shadow-lg">
+            <span class="flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+              Predict Acquisition Quantity
+            </span>
+          </button>
+        </form>
+
+        <div id="acquisition-result" class="mt-8 p-6 bg-gradient-to-r from-green-50 to-teal-50 border border-green-200 rounded-xl hidden">
+          <div class="flex items-center justify-center">
+            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-green-800">Recommended Acquisition Quantity</h3>
+              <p class="text-2xl font-bold text-green-600"><span id="acquisition-prediction">--</span> units</p>
+            </div>
+          </div>
+        </div>
+        
+        <div id="acquisition-error" class="mt-8 p-6 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl hidden">
+          <div class="flex items-center justify-center">
+            <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-red-800">Error</h3>
+              <p class="text-red-600" id="acquisition-error-message">--</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Smart Pricing Section -->
+  <section id="pricing-section" class="section-content hidden">
+    <div class="relative group mb-8">
+      <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-500 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      <div class="relative bg-white rounded-2xl p-8 shadow-lg">
+        <h2 class="text-2xl font-semibold mb-6 text-center">💰 Smart Price Delta Prediction</h2>
+        
+        <form id="price-form" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="price-effective-demand" class="block text-sm font-medium text-gray-700 mb-2">📈 Effective Demand:</label>
+              <input type="number" id="price-effective-demand" name="effective_demand" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div>
+              <label for="price-stock-level" class="block text-sm font-medium text-gray-700 mb-2">📊 Stock Level:</label>
+              <input type="number" id="price-stock-level" name="stock_level" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div>
+              <label for="price-competitor-price" class="block text-sm font-medium text-gray-700 mb-2">💰 Competitor Price:</label>
+              <input type="number" step="0.01" id="price-competitor-price" name="competitor_price" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div>
+              <label for="price-base-price" class="block text-sm font-medium text-gray-700 mb-2">💵 Base Price:</label>
+              <input type="number" step="0.01" id="price-base-price" name="base_price" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+            </div>
+            
+            <div>
+              <label for="price-shelf-life" class="block text-sm font-medium text-gray-700 mb-2">📅 Shelf Life (days):</label>
+              <input type="number" id="price-shelf-life" name="shelf_life_days" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+            </div>
+
+            <div>
+              <label for="price-location" class="block text-sm font-medium text-gray-700 mb-2">📍 Location:</label>
+              <select id="price-location" name="location" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                <option>Delhi</option>
+                <option>Mumbai</option>
+                <option>Bangalore</option>
+                <option>Chennai</option>
+                <option>Kolkata</option>
+              </select>
+            </div>
+
+            <div>
+                <label for="price-weather" class="block text-sm font-medium text-gray-700 mb-2">🌤️ Weather:</label>
+                <select id="price-weather" name="weather" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                  <option value="Sunny">☀️ Sunny</option>
+                  <option value="Rainy">🌧️ Rainy</option>
+                  <option value="Cloudy">☁️ Cloudy</option>
+                  <option value="Humid">💧 Humid</option>
+                  <option value="Dry">🌵 Dry</option>
+                </select>
+              </div>
+  
+              <div>
+                <label for="price-category" class="block text-sm font-medium text-gray-700 mb-2">📦 Category:</label>
+                <select id="price-category" name="category" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                  <option value="Fresh Produce">🥬 Fresh Produce</option>
+                  <option value="Beverages">🥤 Beverages</option>
+                  <option value="Personal Care">🧴 Personal Care</option>
+                  <option value="Household">🏠 Household</option>
+                  <option value="Packaged Food">📦 Packaged Food</option>
+                </select>
+              </div>
+  
+              <div>
+                <label for="price-product-name" class="block text-sm font-medium text-gray-700 mb-2">🏷️ Product Name:</label>
+                <select id="price-product-name" name="product_name" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
+                  {% for i in range(21) %}
+                  <option value="Product_{{ i }}">Product {{ i }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            
+            <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all shadow-lg">
+              <span class="flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                </svg>
+                Predict Price Delta
+              </span>
+            </button>
+          </form>
+  
+          <div id="price-result" class="mt-8 p-6 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl hidden">
+            <div class="flex items-center justify-center">
+              <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-purple-800">Predicted Price Delta</h3>
+                <p class="text-2xl font-bold text-purple-600"><span id="price-prediction">--</span>%</p>
+              </div>
+            </div>
+          </div>
+  
+          <div id="price-error" class="mt-8 p-6 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl hidden">
+            <div class="flex items-center justify-center">
+              <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-red-800">Error</h3>
+                <p class="text-red-600" id="price-error-message">--</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Quick Stats -->
+  <div class="grid grid-cols-3 gap-4 mb-8">
+    <div class="bg-white rounded-2xl p-6 shadow-lg text-center">
+      <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+        </svg>
+      </div>
+      <div class="text-2xl font-bold text-gray-800">95%</div>
+      <div class="text-sm text-gray-600">Prediction Accuracy</div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 shadow-lg text-center">
+      <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="text-2xl font-bold text-gray-800">1.2s</div>
+      <div class="text-sm text-gray-600">Avg Processing</div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 shadow-lg text-center">
+      <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="text-2xl font-bold text-gray-800">24/7</div>
+      <div class="text-sm text-gray-600">Always Available</div>
+    </div>
+  </div>
+  </div>
+  
+  <script>
+  // Section Navigation
+  function showSection(sectionName) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.section-content');
+    sections.forEach(section => {
+      section.classList.add('hidden');
+    });
+    
+    // Show selected section
+    document.getElementById(sectionName + '-section').classList.remove('hidden');
+    
+    // Update URL hash without triggering scroll
+    history.replaceState(null, null, '#' + sectionName);
+  }
+  
+  // Handle URL hash on page load and hash changes
+  function handleHashChange() {
+    const hash = window.location.hash.substring(1); // Remove the '#' symbol
+    
+    // Map hash values to section names
+    const validSections = ['demand', 'acquisition', 'pricing'];
+    
+    if (validSections.includes(hash)) {
+      showSection(hash);
+    } else {
+      // Default to demand section if no valid hash
+      showSection('demand');
+    }
+  }
+  
+  // Listen for hash changes (when user clicks back/forward or manually changes URL)
+  window.addEventListener('hashchange', handleHashChange);
+  
+  // Handle initial page load
+  document.addEventListener('DOMContentLoaded', handleHashChange);
+  
+  // Update navigation cards to use hash links
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to navigation cards using data-section attribute
+    const navigationCards = document.querySelectorAll('[data-section]');
+    
+    navigationCards.forEach(card => {
+      card.addEventListener('click', function() {
+        const section = this.getAttribute('data-section');
+        window.location.hash = section;
+      });
+    });
+  });
+  
+  // Demand Form Handler
+  document.getElementById('demand-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Hide previous results
+    document.getElementById('demand-result').classList.add('hidden');
+    document.getElementById('demand-error').classList.add('hidden');
+    
+    const formData = new FormData(this);
+    
+    try {
+      const response = await fetch('/predict/demand', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      document.getElementById('demand-prediction').textContent = result.prediction;
+      document.getElementById('demand-result').classList.remove('hidden');
+      
+    } catch (error) {
+      console.error('Demand prediction error:', error);
+      document.getElementById('demand-error-message').textContent = error.message;
+      document.getElementById('demand-error').classList.remove('hidden');
+    }
+  });
+  
+  // Acquisition Form Handler
+  document.getElementById('acquisition-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+  
+    // Hide previous results
+    document.getElementById('acquisition-result').classList.add('hidden');
+    document.getElementById('acquisition-error').classList.add('hidden');
+  
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+  
+    // Convert to numbers
+    Object.keys(data).forEach(key => {
+      if (key !== 'undefined') {
+        data[key] = parseFloat(data[key]);
+      }
+    });
+    
+    try {
+      const response = await fetch('/acquisition', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+  
+      const result = await response.json();
+      document.getElementById('acquisition-prediction').textContent = result.prediction;
+      document.getElementById('acquisition-result').classList.remove('hidden');
+    } catch (error) {
+      console.error("Acquisition prediction error:", error);
+      document.getElementById('acquisition-error-message').textContent = error.message;
+      document.getElementById('acquisition-error').classList.remove('hidden');
+    }
+  });
+  
+  // Price Delta Form Handler
+  document.getElementById('price-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Hide previous results
+    document.getElementById('price-result').classList.add('hidden');
+    document.getElementById('price-error').classList.add('hidden');
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    // Convert numeric fields to numbers
+    ['effective_demand', 'stock_level', 'competitor_price', 'base_price', 'shelf_life_days'].forEach(field => {
+      if (data[field]) {
+        data[field] = parseFloat(data[field]);
+      }
+    });
+    
+    try {
+      const response = await fetch('/price-delta', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      document.getElementById('price-prediction').textContent = result.prediction;
+      document.getElementById('price-result').classList.remove('hidden');
+      
+    } catch (error) {
+      console.error('Price delta prediction error:', error);
+      document.getElementById('price-error-message').textContent = error.message;
+      document.getElementById('price-error').classList.remove('hidden');
+    }
+  });
+  </script>
+  
+  {% endblock %}

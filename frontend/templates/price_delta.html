@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Price Delta Predictor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .input-focus:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .prediction-card {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+    
+    .error-card {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+    }
+    
+    .form-section {
+      background: #f8fafc;
+      border-left: 4px solid #667eea;
+    }
+    
+    .floating-label {
+      transition: all 0.2s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen gradient-bg p-4">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-white mb-2">Price Delta Predictor</h1>
+      <p class="text-white/80 text-lg">Advanced AI-powered pricing optimization</p>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="glass-effect rounded-2xl shadow-2xl p-8 mb-8">
+      <form id="price-form" class="space-y-6">
+        <!-- Market Factors Section -->
+        <div class="form-section rounded-xl p-6 mb-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <span class="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+            Market Factors
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label for="effective_demand" class="block text-sm font-medium text-gray-700">
+                Effective Demand
+              </label>
+              <input 
+                type="number" 
+                id="effective_demand" 
+                name="effective_demand" 
+                required 
+                placeholder="Enter demand value"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus transition-all duration-200"
+              />
+            </div>
+            
+            <div class="space-y-2">
+              <label for="stock_level" class="block text-sm font-medium text-gray-700">
+                Stock Level
+              </label>
+              <input 
+                type="number" 
+                id="stock_level" 
+                name="stock_level" 
+                required 
+                placeholder="Current stock quantity"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus transition-all duration-200"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div class="form-section rounded-xl p-6 mb-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <span class="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
+            Pricing Information
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label for="competitor_price" class="block text-sm font-medium text-gray-700">
+                Competitor Price ($)
+              </label>
+              <input 
+                type="number" 
+                step="0.01" 
+                id="competitor_price" 
+                name="competitor_price" 
+                required 
+                placeholder="0.00"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus transition-all duration-200"
+              />
+            </div>
+            
+            <div class="space-y-2">
+              <label for="base_price" class="block text-sm font-medium text-gray-700">
+                Base Price ($)
+              </label>
+              <input 
+                type="number" 
+                step="0.01" 
+                id="base_price" 
+                name="base_price" 
+                required 
+                placeholder="0.00"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus transition-all duration-200"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Details Section -->
+        <div class="form-section rounded-xl p-6 mb-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <span class="w-2 h-2 bg-purple-600 rounded-full mr-3"></span>
+            Product Details
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="space-y-2">
+              <label for="shelf_life_days" class="block text-sm font-medium text-gray-700">
+                Shelf Life (days)
+              </label>
+              <input 
+                type="number" 
+                id="shelf_life_days" 
+                name="shelf_life_days" 
+                required 
+                placeholder="Days until expiry"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus transition-all duration-200"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label for="category" class="block text-sm font-medium text-gray-700">
+                Category
+              </label>
+              <select 
+                id="category" 
+                name="category" 
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white input-focus transition-all duration-200"
+              >
+                <option value="">Select category</option>
+                <option value="Fresh Produce">Fresh Produce</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Personal Care">Personal Care</option>
+                <option value="Household">Household</option>
+                <option value="Packaged Food">Packaged Food</option>
+              </select>
+            </div>
+
+            <div class="space-y-2">
+              <label for="product_name" class="block text-sm font-medium text-gray-700">
+                Product Name
+              </label>
+              <select 
+                id="product_name" 
+                name="product_name" 
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white input-focus transition-all duration-200"
+              >
+                <option value="">Select product</option>
+                <option value="Product_0">Product_0</option>
+                <option value="Product_1">Product_1</option>
+                <option value="Product_2">Product_2</option>
+                <option value="Product_3">Product_3</option>
+                <option value="Product_4">Product_4</option>
+                <option value="Product_5">Product_5</option>
+                <option value="Product_6">Product_6</option>
+                <option value="Product_7">Product_7</option>
+                <option value="Product_8">Product_8</option>
+                <option value="Product_9">Product_9</option>
+                <option value="Product_10">Product_10</option>
+                <option value="Product_11">Product_11</option>
+                <option value="Product_12">Product_12</option>
+                <option value="Product_13">Product_13</option>
+                <option value="Product_14">Product_14</option>
+                <option value="Product_15">Product_15</option>
+                <option value="Product_16">Product_16</option>
+                <option value="Product_17">Product_17</option>
+                <option value="Product_18">Product_18</option>
+                <option value="Product_19">Product_19</option>
+                <option value="Product_20">Product_20</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Environmental Factors Section -->
+        <div class="form-section rounded-xl p-6 mb-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <span class="w-2 h-2 bg-orange-600 rounded-full mr-3"></span>
+            Environmental Factors
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label for="location" class="block text-sm font-medium text-gray-700">
+                Location
+              </label>
+              <select 
+                id="location" 
+                name="location" 
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white input-focus transition-all duration-200"
+              >
+                <option value="">Select location</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Kolkata">Kolkata</option>
+              </select>
+            </div>
+
+            <div class="space-y-2">
+              <label for="weather" class="block text-sm font-medium text-gray-700">
+                Weather Conditions
+              </label>
+              <select 
+                id="weather" 
+                name="weather" 
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white input-focus transition-all duration-200"
+              >
+                <option value="">Select weather</option>
+                <option value="Sunny">Sunny</option>
+                <option value="Rainy">Rainy</option>
+                <option value="Cloudy">Cloudy</option>
+                <option value="Humid">Humid</option>
+                <option value="Dry">Dry</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center pt-6">
+          <button 
+            type="submit" 
+            class="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-700 btn-hover transition-all duration-200 shadow-lg"
+          >
+            <span class="flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+              Generate Prediction
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Results Section -->
+    <div id="result" class="glass-effect rounded-2xl shadow-2xl p-8 text-center hidden">
+      <div class="prediction-card rounded-xl p-6 text-white">
+        <div class="flex items-center justify-center mb-4">
+          <svg class="w-12 h-12 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <h2 class="text-3xl font-bold mb-2">Predicted Price Delta</h2>
+        <div class="text-5xl font-bold mb-4">
+          <span id="pred-value">--</span>%
+        </div>
+        <p class="text-lg opacity-90">Based on current market conditions</p>
+        
+        <!-- Additional insights -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div class="bg-white/20 rounded-lg p-3">
+            <div class="font-semibold">Market Impact</div>
+            <div id="market-impact">--</div>
+          </div>
+          <div class="bg-white/20 rounded-lg p-3">
+            <div class="font-semibold">Confidence Level</div>
+            <div id="confidence-level">--</div>
+          </div>
+          <div class="bg-white/20 rounded-lg p-3">
+            <div class="font-semibold">Recommendation</div>
+            <div id="recommendation">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Section -->
+    <div id="error" class="glass-effect rounded-2xl shadow-2xl p-8 text-center hidden">
+      <div class="error-card rounded-xl p-6 text-white">
+        <div class="flex items-center justify-center mb-4">
+          <svg class="w-12 h-12 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold mb-2">Prediction Error</h2>
+        <p class="text-lg opacity-90 mb-4">
+          <span id="error-message">--</span>
+        </p>
+        <button 
+          onclick="document.getElementById('error').classList.add('hidden')"
+          class="px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden">
+      <div class="glass-effect rounded-2xl p-8 text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
+        <p class="text-lg font-semibold">Analyzing market data...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Form submission handler
+    document.getElementById('price-form').onsubmit = async function(e) {
+      e.preventDefault();
+      
+      // Show loading indicator
+      document.getElementById('loading').classList.remove('hidden');
+      
+      // Hide previous results/errors
+      document.getElementById('result').classList.add('hidden');
+      document.getElementById('error').classList.add('hidden');
+      
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form).entries());
+      
+      // Convert numeric fields to numbers
+      data.effective_demand = parseFloat(data.effective_demand);
+      data.stock_level = parseFloat(data.stock_level);
+      data.competitor_price = parseFloat(data.competitor_price);
+      data.base_price = parseFloat(data.base_price);
+      data.shelf_life_days = parseFloat(data.shelf_life_days);
+      
+      // Simulate API delay for demo
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      try {
+        // For demo purposes, generate a mock prediction
+        const mockPrediction = generateMockPrediction(data);
+        
+        // In real implementation, this would be:
+        // const resp = await fetch('/price-delta', {
+        //   method: 'POST',
+        //   headers: {'Content-Type': 'application/json'},
+        //   body: JSON.stringify(data),
+        // });
+        
+        // if (!resp.ok) {
+        //   throw new Error(`HTTP error! status: ${resp.status}`);
+        // }
+        
+        // const json = await resp.json();
+        
+        // Hide loading
+        document.getElementById('loading').classList.add('hidden');
+        
+        // Display results
+        document.getElementById('pred-value').textContent = mockPrediction.prediction;
+        document.getElementById('market-impact').textContent = mockPrediction.marketImpact;
+        document.getElementById('confidence-level').textContent = mockPrediction.confidence;
+        document.getElementById('recommendation').textContent = mockPrediction.recommendation;
+        
+        document.getElementById('result').classList.remove('hidden');
+        
+        // Scroll to results
+        document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('error-message').textContent = error.message;
+        document.getElementById('error').classList.remove('hidden');
+        document.getElementById('error').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    
+    // Mock prediction generator for demo
+    function generateMockPrediction(data) {
+      const baseChange = Math.random() * 20 - 10; // -10% to +10%
+      const demandFactor = (data.effective_demand / 100) * 2;
+      const stockFactor = data.stock_level > 50 ? -2 : 3;
+      const competitorFactor = data.competitor_price > data.base_price ? 2 : -1;
+      
+      const prediction = (baseChange + demandFactor + stockFactor + competitorFactor).toFixed(2);
+      
+      const confidence = Math.max(70, Math.min(95, 80 + Math.random() * 15));
+      
+      let recommendation = "Hold";
+      if (prediction > 5) recommendation = "Increase Price";
+      else if (prediction < -5) recommendation = "Decrease Price";
+      
+      let marketImpact = "Low";
+      if (Math.abs(prediction) > 3) marketImpact = "Medium";
+      if (Math.abs(prediction) > 7) marketImpact = "High";
+      
+      return {
+        prediction: prediction,
+        confidence: confidence.toFixed(0) + "%",
+        recommendation: recommendation,
+        marketImpact: marketImpact
+      };
+    }
+    
+    // Form validation enhancements
+    const form = document.getElementById('price-form');
+    const inputs = form.querySelectorAll('input, select');
+    
+    inputs.forEach(input => {
+      input.addEventListener('input', function() {
+        if (this.checkValidity()) {
+          this.classList.remove('border-red-300');
+          this.classList.add('border-green-300');
+        } else {
+          this.classList.remove('border-green-300');
+          this.classList.add('border-red-300');
+        }
+      });
+    });
+    
+    // Auto-save form data to prevent loss
+    const formData = {};
+    inputs.forEach(input => {
+      input.addEventListener('input', function() {
+        formData[this.name] = this.value;
+      });
+    });
+  </script>
+</body>
+</html>

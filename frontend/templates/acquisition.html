@@ -1,0 +1,394 @@
+
+  {% extends "base.html" %}
+
+{% block title %}Intelligence Dashboard - Walmart Sparkathon{% endblock %}
+
+{% block header %}Walmart Intelligence Hub{% endblock %}
+
+{% block content %}
+<style>
+  .loading-spinner { display: none; }
+  .btn-loading .btn-text { display: none; }
+  .btn-loading .loading-spinner { display: flex; align-items: center; justify-content: center; }
+  .feature-card { transition: all 0.3s ease; }
+  .feature-card:hover { transform: translateY(-4px); }
+  .gradient-border {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2px;
+    border-radius: 1rem;
+  }
+  .gradient-border-content {
+    background: white;
+    border-radius: calc(1rem - 2px);
+  }
+  .pulse-animation {
+    animation: pulse-custom 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes pulse-custom {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+</style>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <h1 class="text-xl font-bold text-gray-800">📊 Smart Acquisition Predictor</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="inline-flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium text-sm">
+            <div class="w-2 h-2 bg-green-500 rounded-full mr-2 pulse-animation"></div>
+            AI Powered
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-purple-600 rounded-3xl p-8 mb-8 shadow-2xl">
+      <div class="absolute inset-0 bg-black/20"></div>
+      <div class="relative z-10 text-center">
+        <div class="inline-flex items-center bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-sm mb-4">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          SMART INVENTORY SYSTEM
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+          Intelligent <span class="text-yellow-400">Acquisition</span> Predictor
+        </h1>
+        <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+          AI-powered demand forecasting and inventory optimization for smarter purchasing decisions
+        </p>
+      </div>
+      <div class="absolute top-4 right-4 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl"></div>
+      <div class="absolute bottom-4 left-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- Prediction Form -->
+      <div class="relative group">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity"></div>
+        <div class="relative bg-white rounded-2xl p-8 shadow-lg">
+          <div class="flex items-center mb-6">
+            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800">Predict Acquisition Quantity</h2>
+          </div>
+          
+          <form id="acquisition-form" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="demand" class="block text-sm font-semibold text-gray-700 mb-2">📈 Predicted Demand</label>
+                <input 
+                  type="number" 
+                  id="demand" 
+                  name="demand" 
+                  step="0.01" 
+                  required 
+                  placeholder="Enter demand units"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+              </div>
+              
+              <div>
+                <label for="stock_level" class="block text-sm font-semibold text-gray-700 mb-2">📦 Current Stock Level</label>
+                <input 
+                  type="number" 
+                  id="stock_level" 
+                  name="stock_level" 
+                  step="0.01" 
+                  required 
+                  placeholder="Current inventory"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="shelf_life_days" class="block text-sm font-semibold text-gray-700 mb-2">⏰ Shelf Life (days)</label>
+                <input 
+                  type="number" 
+                  id="shelf_life_days" 
+                  name="shelf_life_days" 
+                  step="0.1" 
+                  required 
+                  placeholder="Product shelf life"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+              </div>
+              
+              <div>
+                <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">💰 Price Per Unit</label>
+                <input 
+                  type="number" 
+                  id="price" 
+                  name="price" 
+                  step="0.01" 
+                  required 
+                  placeholder="Unit price"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label for="spoilage_cost" class="block text-sm font-semibold text-gray-700 mb-2">⚠️ Spoilage Cost Per Unit</label>
+              <input 
+                type="number" 
+                id="spoilage_cost" 
+                name="spoilage_cost" 
+                step="0.01" 
+                required 
+                placeholder="Cost of spoiled unit"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              id="submitBtn"
+              class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all shadow-lg"
+            >
+              <span class="btn-text flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                Generate Prediction
+              </span>
+              <div class="loading-spinner">
+                <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                </svg>
+              </div>
+            </button>
+          </form>
+
+          <!-- Results -->
+          <div id="result" class="mt-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200 hidden">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-green-800">🧠 AI Recommendation</h3>
+                <p class="text-sm text-green-600">Optimal acquisition quantity calculated</p>
+              </div>
+            </div>
+            <div class="text-center py-4">
+              <div class="text-3xl font-bold text-green-800 mb-2">
+                <span id="pred-value">-</span> units
+              </div>
+              <p class="text-green-600">Recommended acquisition quantity</p>
+            </div>
+          </div>
+          
+          <div id="error" class="mt-8 p-6 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl border border-red-200 hidden">
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-red-800">Error</h3>
+                <p class="text-red-600"><span id="error-message">-</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- How It Works -->
+      <div class="bg-white rounded-2xl p-8 shadow-lg">
+        <h3 class="text-2xl font-bold text-gray-800 mb-6">How It Works</h3>
+        <div class="space-y-6">
+          <div class="flex items-start space-x-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
+            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">Data Analysis</h4>
+              <p class="text-gray-600 text-sm">Advanced algorithms analyze demand patterns, stock levels, and product lifecycle data</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start space-x-4 p-4 bg-gradient-to-r from-green-50 to-teal-50 rounded-xl">
+            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">Risk Assessment</h4>
+              <p class="text-gray-600 text-sm">Evaluates spoilage risks, shelf life constraints, and financial impact</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start space-x-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl">
+            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">Optimal Recommendation</h4>
+              <p class="text-gray-600 text-sm">Provides precise acquisition quantities to maximize profit and minimize waste</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-2xl p-6 shadow-lg text-center feature-card">
+        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <div class="text-2xl font-bold text-gray-800">95%</div>
+        <div class="text-sm text-gray-600">Accuracy Rate</div>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-lg text-center feature-card">
+        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="text-2xl font-bold text-gray-800">1.2s</div>
+        <div class="text-sm text-gray-600">Avg Response</div>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-lg text-center feature-card">
+        <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+          </svg>
+        </div>
+        <div class="text-2xl font-bold text-gray-800">30%</div>
+        <div class="text-sm text-gray-600">Cost Savings</div>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-lg text-center feature-card">
+        <div class="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </svg>
+        </div>
+        <div class="text-2xl font-bold text-gray-800">85%</div>
+        <div class="text-sm text-gray-600">Waste Reduction</div>
+      </div>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow feature-card">
+        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Smart Algorithms</h3>
+        <p class="text-gray-600">Advanced machine learning models trained on historical data for precise predictions</p>
+      </div>
+      
+      <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow feature-card">
+        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Real-time Optimization</h3>
+        <p class="text-gray-600">Dynamic calculations that adapt to changing market conditions and inventory levels</p>
+      </div>
+      
+      <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow feature-card">
+        <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Cost Efficiency</h3>
+        <p class="text-gray-600">Minimize waste and maximize profit through intelligent inventory management</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('acquisition-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submitBtn');
+      const resultDiv = document.getElementById('result');
+      const errorDiv = document.getElementById('error');
+      
+      // Show loading state
+      submitBtn.classList.add('btn-loading');
+      submitBtn.disabled = true;
+      resultDiv.classList.add('hidden');
+      errorDiv.classList.add('hidden');
+
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      // Convert string input to numbers
+      data.demand = parseFloat(data.demand);
+      data.stock_level = parseFloat(data.stock_level);
+      data.shelf_life_days = parseFloat(data.shelf_life_days);
+      data.price = parseFloat(data.price);
+      data.spoilage_cost = parseFloat(data.spoilage_cost);
+      
+      try {
+        // Simulate API call with timeout
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        const resp = await fetch('/acquisition', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data),
+        });
+
+        if (!resp.ok) {
+          throw new Error(`HTTP ${resp.status}`);
+        }
+
+        const json = await resp.json();
+        console.log("Server response:", json);
+
+        document.getElementById('pred-value').textContent = json.prediction;
+        resultDiv.classList.remove('hidden');
+        
+        // Scroll to result
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+      } catch (error) {
+        console.error("Fetch error:", error);
+        document.getElementById('error-message').textContent = error.message;
+        errorDiv.classList.remove('hidden');
+      } finally {
+        // Reset button state
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+  {% endblock %}

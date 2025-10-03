@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Donation Matching Route Planner</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+    #map { height: 400px; }
+    @media (min-width: 640px) {
+      #map { height: 500px; }
+    }
+    @media (min-width: 1024px) {
+      #map { height: 600px; }
+    }
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 350px;
+    }
+    @media (max-width: 640px) {
+      .notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+      }
+    }
+    .hero-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .section-divider {
+      background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+      height: 1px;
+      margin: 2rem 0;
+    }
+    @media (min-width: 768px) {
+      .section-divider {
+        margin: 3rem 0;
+      }
+    }
+    .glow-button {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    .glow-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    @media (max-width: 640px) {
+      .card-hover:hover {
+        transform: translateY(-2px);
+      }
+    }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Hero Section -->
+    <section class="text-white py-8 px-4 sm:py-12 md:py-16 lg:py-20">
+        <div
+            class="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-blue-600 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 mb-4 sm:mb-6 md:mb-8 shadow-2xl">
+            <div class="absolute inset-0 bg-black/20"></div>
+            <div class="relative z-10 text-center">
+                <div
+                    class="inline-flex items-center bg-yellow-400 text-black px-3 py-1 sm:px-4 sm:py-2 rounded-full font-bold text-xs sm:text-sm mb-3 sm:mb-4">
+                    <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    SPARKATHON 2025
+                    </div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 md:mb-4">
+            Walmart <span class="text-yellow-400">Social</span> Dashboard
+        </h1>
+        <p class="text-base sm:text-lg md:text-xl text-blue-100 max-w-2xl mx-auto px-2">
+            Join our community-driven platform to match donations with those in need
+        </p>
+        </div>
+        <!-- Floating Elements -->
+        <div class="absolute top-2 right-2 sm:top-4 sm:right-4 w-12 h-12 sm:w-20 sm:h-20 bg-yellow-400/20 rounded-full blur-xl">
+        </div>
+        <div class="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 w-16 h-16 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-2xl">
+        </div>
+        </div>
+        </section>
+        
+        <!-- Main Content -->
+        <div class="max-w-6xl mx-auto px-4 py-2 sm:py-8 md:py-12">
+            <!-- Mode Selection Section -->
+            <section class="mb-6 sm:mb-8 md:mb-12">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 max-w-4xl mx-auto">
+                    <div class="card-hover">
+                        <button id="donateMode"
+                            class="w-full p-4 sm:p-6 md:p-8 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl sm:rounded-2xl shadow-lg glow-button">
+                            <h3 class="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">I Want to Donate</h3>
+                        </button>
+            </div>
+        <div class="card-hover">
+            <button id="needMode"
+                class="w-full p-4 sm:p-6 md:p-8 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl sm:rounded-2xl shadow-lg glow-button">
+                <h3 class="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">I Need Help</h3>
+            </button>
+        </div>
+        </div>
+        </section>
+
+    <div class="section-divider"></div>
+    
+    <!-- Map Section -->
+    <section class="mb-6 sm:mb-8 md:mb-12">
+        <div class="glass-card rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-xl">
+            <div
+                class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-4 sm:mb-6 justify-between items-start sm:items-center">
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-2 w-full sm:w-auto">
+                    <button id="clearBtn"
+                        class="px-3 py-2 sm:px-4 sm:py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 text-sm sm:text-base">
+                        🗑️ Clear Map
+                    </button>
+                    <select id="profileSelect"
+                        class="px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 text-sm sm:text-base">
+                        <option value="driving-car">🚗 Driving</option>
+                        <option value="foot-walking">🚶 Walking</option>
+                        <option value="cycling-regular">🚴 Cycling</option>
+                        <option value="driving-hgv">🚚 Truck</option>
+                    </select>
+                    </div>
+        <div class="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm">
+            <div class="flex items-center gap-1">
+                <div class="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
+                <span>Donations</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <div class="w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded-full"></div>
+                <span>Needs</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <div class="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
+                <span>Selected</span>
+            </div>
+        </div>
+        </div>
+        <div id="map" class="rounded-lg sm:rounded-xl overflow-hidden shadow-inner"></div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+    
+    <!-- Form Section -->
+    <section class="mb-6 sm:mb-8 md:mb-12">
+    
+        <!-- Donation Form -->
+        <div id="donationForm" class="glass-card rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl">
+            <div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <div
+                    class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <span class="text-lg sm:text-xl md:text-2xl">🎁</span>
+                </div>
+        <div>
+            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">Donate Items</h3>
+            <p class="text-sm sm:text-base text-gray-600">Share what you have with those in need</p>
+        </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Item Type</label>
+            <select id="donationItem"
+                class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base">
+                <option value="">Select Item</option>
+                <option value="food">🍞 Food</option>
+                <option value="clothes">👕 Clothes</option>
+                <option value="books">📚 Books</option>
+                <option value="medicine">💊 Medicine</option>
+                <option value="toys">🧸 Toys</option>
+                <option value="electronics">📱 Electronics</option>
+            </select>
+            </div>
+            
+            <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+            <input id="donationQuantity" type="number" placeholder="How many?"
+                class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base"
+                min="1">
+            </div>
+        <div class="sm:col-span-2 lg:col-span-1">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Your Name (Optional)</label>
+            <input id="donorName" type="text" placeholder="Anonymous"
+                class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base">
+        </div>
+        </div>
+        <div class="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+            <p class="text-green-800 text-sm font-medium">📍 Click on the map above to select your pickup location</p>
+        </div>
+        <button id="submitDonation"
+            class="w-full py-3 sm:py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold text-base sm:text-lg glow-button disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            🚀 Submit Donation
+        </button>
+    </div>
+
+    <!-- Need Form -->
+    <div id="needForm" class="glass-card rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl hidden">
+        <div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <span class="text-lg sm:text-xl md:text-2xl">🙏</span>
+            </div>
+            <div>
+                <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">Request Help</h3>
+                <p class="text-sm sm:text-base text-gray-600">Let others know what you need</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Item Type</label>
+            <select id="needItem"
+                class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base">
+                <option value="">Select Item</option>
+                <option value="food">🍞 Food</option>
+                <option value="clothes">👕 Clothes</option>
+                <option value="books">📚 Books</option>
+                <option value="medicine">💊 Medicine</option>
+                <option value="toys">🧸 Toys</option>
+                <option value="electronics">📱 Electronics</option>
+            </select>
+            </div>
+            
+            <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+            <input id="needQuantity" type="number" placeholder="How many?"
+                class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                min="1">
+            </div>
+        <div class="sm:col-span-2 lg:col-span-1">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Your Name (Optional)</label>
+            <input id="receiverName" type="text" placeholder="Anonymous"
+                class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base">
+        </div>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+            <p class="text-blue-800 text-sm font-medium">📍 Click on the map above to select your delivery location</p>
+        </div>
+        <button id="submitNeed"
+            class="w-full py-3 sm:py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-semibold text-base sm:text-lg glow-button disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            🆘 Submit Request
+        </button>
+    </div>
+    </section>
+    
+    <!-- Route Information -->
+    <div id="routeInfo" class="glass-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl mb-4 sm:mb-6 md:mb-8 hidden">
+        <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                <span class="text-lg sm:text-xl">🗺️</span>
+            </div>
+        <h3 class="text-lg sm:text-xl font-bold text-gray-800">Route Information</h3>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
+        <div class="bg-white p-3 sm:p-4 rounded-lg">
+            <p class="text-xs sm:text-sm text-gray-600 mb-1">Distance</p>
+            <p class="text-sm sm:text-base md:text-lg font-semibold text-gray-800" id="distance">-</p>
+        </div>
+        <div class="bg-white p-3 sm:p-4 rounded-lg">
+            <p class="text-xs sm:text-sm text-gray-600 mb-1">Duration</p>
+            <p class="text-sm sm:text-base md:text-lg font-semibold text-gray-800" id="duration">-</p>
+        </div>
+        <div class="bg-white p-3 sm:p-4 rounded-lg">
+            <p class="text-xs sm:text-sm text-gray-600 mb-1">Transport</p>
+            <p class="text-sm sm:text-base md:text-lg font-semibold text-gray-800" id="transport">-</p>
+        </div>
+        <div class="bg-white p-3 sm:p-4 rounded-lg col-span-2 sm:col-span-1">
+            <p class="text-xs sm:text-sm text-gray-600 mb-1">From</p>
+            <p class="text-sm sm:text-base md:text-lg font-semibold text-gray-800 truncate" id="fromLocation">-</p>
+        </div>
+        <div class="bg-white p-3 sm:p-4 rounded-lg col-span-2 sm:col-span-2 lg:col-span-1">
+            <p class="text-xs sm:text-sm text-gray-600 mb-1">To</p>
+            <p class="text-sm sm:text-base md:text-lg font-semibold text-gray-800 truncate" id="toLocation">-</p>
+        </div>
+        </div>
+        </div>
+
+    <div class="section-divider"></div>
+    
+    <!-- Matches Section -->
+    <div id="matchesContainer" class="hidden">
+        <div class="text-center mb-6 sm:mb-8">
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Available Matches</h2>
+            <p class="text-gray-600 text-base sm:text-lg">Great news! We found perfect matches for you</p>
+        </div>
+    <div class="glass-card rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-xl">
+        <div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div
+                class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                <span class="text-lg sm:text-xl md:text-2xl">🎯</span>
+            </div>
+        <div>
+            <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">Perfect Matches Found</h3>
+            <p class="text-sm sm:text-base text-gray-600">Connect with people who need exactly what you're offering</p>
+        </div>
+        </div>
+        <div id="matchesList" class="space-y-3 sm:space-y-4"></div>
+    </div>
+    </div>
+    </div>
+
+<!-- Footer -->
+<footer class="text-center text-gray-500 text-xs sm:text-sm py-4 sm:py-6">
+    © 2025 Walmart Sparkathon — All Rights Reserved 💙
+</footer>
+
+<!-- Notification Container -->
+<div id="notificationContainer"></div>
+
+<script>
+            // Initialize map
+            const map = L.map('map').setView([49.4174, 8.6845], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        // State variables
+            let currentMode = 'donate';
+            let selectedLocation = null;
+            let locationMarker = null;
+            let donationMarkers = [];
+            let needMarkers = [];
+            let routeLayer = null;
+            let currentMatches = [];
+
+            // DOM elements
+            const donateBtn = document.getElementById('donateMode');
+            const needBtn = document.getElementById('needMode');
+            const donationForm = document.getElementById('donationForm');
+            const needForm = document.getElementById('needForm');
+            const clearBtn = document.getElementById('clearBtn');
+            const profileSelect = document.getElementById('profileSelect');
+            const routeInfo = document.getElementById('routeInfo');
+            const matchesContainer = document.getElementById('matchesContainer');
+            const matchesList = document.getElementById('matchesList');
+            const notificationContainer = document.getElementById('notificationContainer');
+
+            // Form elements
+            const donationItem = document.getElementById('donationItem');
+            const donationQuantity = document.getElementById('donationQuantity');
+            const donorName = document.getElementById('donorName');
+            const submitDonation = document.getElementById('submitDonation');
+            const needItem = document.getElementById('needItem');
+            const needQuantity = document.getElementById('needQuantity');
+            const receiverName = document.getElementById('receiverName');
+            const submitNeed = document.getElementById('submitNeed');
+
+            // Route info elements
+            const distanceEl = document.getElementById('distance');
+            const durationEl = document.getElementById('duration');
+            const transportEl = document.getElementById('transport');
+            const fromLocationEl = document.getElementById('fromLocation');
+            const toLocationEl = document.getElementById('toLocation');
+
+            const emojis = {
+                'driving-car': '🚗',
+                'foot-walking': '🚶',
+                'cycling-regular': '🚴',
+                'driving-hgv': '🚚'
+            };
+
+            // Mode switching
+            donateBtn.onclick = () => {
+                currentMode = 'donate';
+                donateBtn.classList.add('opacity-100');
+                donateBtn.classList.remove('opacity-60');
+                needBtn.classList.add('opacity-60');
+                needBtn.classList.remove('opacity-100');
+                donationForm.classList.remove('hidden');
+                needForm.classList.add('hidden');
+                clearMap();
+            };
+
+            needBtn.onclick = () => {
+                currentMode = 'need';
+                needBtn.classList.add('opacity-100');
+                needBtn.classList.remove('opacity-60');
+                donateBtn.classList.add('opacity-60');
+                donateBtn.classList.remove('opacity-100');
+                needForm.classList.remove('hidden');
+                donationForm.classList.add('hidden');
+                clearMap();
+            };
+
+            // Map click handler
+            map.on('click', (e) => {
+                selectedLocation = [e.latlng.lng, e.latlng.lat];
+        
+            // Remove existing location marker
+            if (locationMarker) {
+                map.removeLayer(locationMarker);
+            }
+
+            // Add new location marker
+            locationMarker = L.marker(e.latlng, {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                })
+            }).addTo(map);
+        
+            checkFormValidation();
+        });
+
+            // Form validation
+            function checkFormValidation() {
+                if (currentMode === 'donate') {
+                    const valid = donationItem.value && donationQuantity.value && selectedLocation;
+                    submitDonation.disabled = !valid;
+                } else {
+                    const valid = needItem.value && needQuantity.value && selectedLocation;
+                    submitNeed.disabled = !valid;
+                }
+            }
+
+            donationItem.onchange = checkFormValidation;
+            donationQuantity.oninput = checkFormValidation;
+            needItem.onchange = checkFormValidation;
+            needQuantity.oninput = checkFormValidation;
+
+            // Submit donation
+            submitDonation.onclick = async () => {
+            const data = {
+            item: donationItem.value,
+            quantity: parseInt(donationQuantity.value),
+            location: selectedLocation,
+            donor_name: donorName.value || 'Anonymous'
+        };
+
+            try {
+                const response = await fetch('/api/donate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+        });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('Donation added successfully!', 'success');
+                addDonationMarker(data);
+                clearForm();
+        
+                    if (result.matches && result.matches.length > 0) {
+                        currentMatches = result.matches;
+                        showMatches();
+                    }
+                }
+            } catch (error) {
+                showNotification('Error adding donation: ' + error.message, 'error');
+            }
+        };
+
+            // Submit need
+            submitNeed.onclick = async () => {
+            const data = {
+            item: needItem.value,
+            quantity: parseInt(needQuantity.value),
+            location: selectedLocation,
+            receiver_name: receiverName.value || 'Anonymous'
+        };
+
+            try {
+                const response = await fetch('/api/need', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+        });
+
+            const result = await response.json();
+        
+            if (result.success) {
+                showNotification('Need added successfully!', 'success');
+                addNeedMarker(data);
+                clearForm();
+        
+              if (result.matches && result.matches.length > 0) {
+                  currentMatches = result.matches;
+                  showMatches();
+              }
+          }
+        } catch (error) {
+            showNotification('Error adding need: ' + error.message, 'error');
+        }
+        };
+
+            // Add markers to map
+            function addDonationMarker(donation) {
+                const marker = L.marker([donation.location[1], donation.location[0]], {
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map);
+
+                marker.bindPopup(`
+        <b>Donation</b><br>
+        Item: ${donation.item}<br>
+        Quantity: ${donation.quantity}<br>
+        Donor: ${donation.donor_name}
+      `);
+
+            donationMarkers.push(marker);
+        }
+
+            function addNeedMarker(need) {
+                const marker = L.marker([need.location[1], need.location[0]], {
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map);
+
+                marker.bindPopup(`
+        <b>Need</b><br>
+        Item: ${need.item}<br>
+        Quantity: ${need.quantity}<br>
+        Receiver: ${need.receiver_name}
+      `);
+
+            needMarkers.push(marker);
+        }
+
+            // Show matches
+            function showMatches() {
+                matchesList.innerHTML = '';
+        
+            currentMatches.forEach(match => {
+                const matchEl = document.createElement('div');
+                matchEl.className = 'bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 rounded-lg p-6 shadow-md card-hover';
+                matchEl.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-2xl">🎯</span>
+                <h4 class="text-xl font-bold text-gray-800">${match.item}</h4>
+              </div>
+              <p class="text-gray-600 mb-2"><strong>Quantity:</strong> ${match.quantity}</p>
+              <p class="text-gray-600 mb-4">
+                <strong>From:</strong> ${match.donor_name} → <strong>To:</strong> ${match.receiver_name}
+              </p>
+            </div>
+            <button onclick="acceptMatch('${match.id}')" class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold glow-button">
+              ✅ Accept & Route
+            </button>
+          </div>
+        `;
+            matchesList.appendChild(matchEl);
+        });
+
+            matchesContainer.classList.remove('hidden');
+            showNotification(`🎉 ${currentMatches.length} new match(es) found!`, 'info');
+        }
+
+            // Accept match and show route
+            window.acceptMatch = async (matchId) => {
+                try {
+                    const response = await fetch(`/api/accept-match/${matchId}`, {
+                        method: 'POST'
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const match = result.match;
+
+                        // Get route between donor and receiver
+                        const routeResponse = await fetch('/api/route', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                coordinates: [match.donor_location, match.receiver_location],
+                                profile: profileSelect.value
+                            })
+                        });
+        
+                    const routeResult = await routeResponse.json();
+            
+                    if (routeResult.success) {
+                        // Clear existing route
+                        if (routeLayer) {
+                            map.removeLayer(routeLayer);
+                        }
+            
+                // Draw new route
+                const coords = routeResult.route.geometry.coordinates.map(c => [c[1], c[0]]);
+                routeLayer = L.polyline(coords, { color: '#3B82F6', weight: 4 }).addTo(map);
+                map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
+            
+                // Show route info
+                distanceEl.textContent = (routeResult.route.distance / 1000).toFixed(2) + ' km';
+                const mins = Math.round(routeResult.route.duration / 60);
+                durationEl.textContent = mins > 59 ? `${Math.floor(mins / 60)}h ${mins % 60}m` : mins + ' min';
+                transportEl.textContent = emojis[profileSelect.value] || '';
+                fromLocationEl.textContent = match.donor_name;
+                toLocationEl.textContent = match.receiver_name;
+                routeInfo.classList.remove('hidden');
+            
+                showNotification('✅ Match accepted! Route displayed on map.', 'success');
+            
+                        // Remove accepted match from list
+                        currentMatches = currentMatches.filter(m => m.id !== matchId);
+                        if (currentMatches.length === 0) {
+                            matchesContainer.classList.add('hidden');
+                        } else {
+                            showMatches();
+                        }
+                    }
+                }
+            } catch (error) {
+                showNotification('Error accepting match: ' + error.message, 'error');
+            }
+        };
+
+            // Clear form
+            function clearForm() {
+                donationItem.value = '';
+                donationQuantity.value = '';
+                donorName.value = '';
+                needItem.value = '';
+                needQuantity.value = '';
+                receiverName.value = '';
+                selectedLocation = null;
+        
+            if (locationMarker) {
+                map.removeLayer(locationMarker);
+                locationMarker = null;
+            }
+        
+            checkFormValidation();
+        }
+
+            // Clear map
+            function clearMap() {
+                if (locationMarker) {
+                    map.removeLayer(locationMarker);
+                    locationMarker = null;
+                }
+        
+            if (routeLayer) {
+                map.removeLayer(routeLayer);
+                routeLayer = null;
+        }
+
+            donationMarkers.forEach(marker => map.removeLayer(marker));
+            needMarkers.forEach(marker => map.removeLayer(marker));
+            donationMarkers = [];
+            needMarkers = [];
+
+            selectedLocation = null;
+            routeInfo.classList.add('hidden');
+            matchesContainer.classList.add('hidden');
+            clearForm();
+        }
+
+            clearBtn.onclick = clearMap;
+
+            // Show notification
+            function showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `notification p-4 mb-2 rounded-lg shadow-lg ${type === 'success' ? 'bg-green-100 border-green-500 text-green-800' :
+                    type === 'error' ? 'bg-red-100 border-red-500 text-red-800' :
+                        'bg-blue-100 border-blue-500 text-blue-800'
+                    } border-l-4`;
+                notification.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span class="text-lg">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+          <span>${message}</span>
+        </div>
+      `;
+
+                notificationContainer.appendChild(notification);
+        
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+            // Load existing matches on page load
+            async function loadMatches() {
+                try {
+                    const response = await fetch('/api/matches');
+                    const result = await response.json();
+        
+                if (result.matches && result.matches.length > 0) {
+                    currentMatches = result.matches;
+                    showMatches();
+                }
+            } catch (error) {
+                console.error('Error loading matches:', error);
+            }
+        }
+
+            // Initialize
+            loadMatches();
+      </script>
+</body>
+</html>
