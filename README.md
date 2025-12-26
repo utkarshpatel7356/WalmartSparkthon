@@ -1,22 +1,40 @@
-# Step 1: Create a virtual environment named `.venv`
-python3 -m venv .venv
 
-# Step 2: Activate the virtual environment
-source .venv/bin/activate
+## **Walmart Intelligence Dashboard**
 
-# Step 3: Install required Python packages
-pip install fastapi uvicorn jinja2 sqlalchemy aiosqlite
+### **📖 Project Overview**
 
-# Step 4: Save installed packages to requirements.txt
-pip freeze > requirements.txt
+The **Walmart Intelligence Dashboard** is an integrated AI-powered platform designed to drive sustainability and optimize supply chain operations. It offers six distinct solutions that leverage Machine Learning to reduce waste, enhance the circular economy, and improve inventory decision-making for retailers and consumers.
 
-# Step 5: (Optional) Upgrade pip to the latest version
-pip install --upgrade pip
+### **🚀 Key Modules**
 
-# Step 6: Install all dependencies from requirements.txt (useful if cloning fresh)
-pip install -r requirements.txt
+1. **♻️ 3R System (Circular Economy Analyzer)**
+* **Visual Analysis:** Users upload product images to receive an AI-generated assessment.
+* **Actionable Insights:** Provides reasoning and recommendations on whether a product should be **Reused** or **Recycled**.
 
-# Step 7: Start the FastAPI server with hot-reloading
-uvicorn backend.app.main:app --reload
 
-# Youtube demo : https://youtu.be/B2eHtU8NMvk?si=RalgJVCCYc4Vhj9J
+2. **🔮 Smart Predictions Suite**
+* **Demand Prediction:** Uses **Transformer** models on time-series data to score current product demand (0-40).
+* **Acquisition Optimizer:** Utilizes **Reinforcement Learning** to recommend the exact quantity of stock to acquire based on historical performance.
+* **Dynamic Pricing:** Implements a **Random Forest Regressor** to suggest price modifications (e.g., markdowns) to clear inventory before shelf-life expiration.
+
+
+3. **📈 Trending Products Tracker**
+* Scrapes e-commerce platforms and integrates with **Google Trends** to identify high-buzz products, regional trends, and performance history.
+
+
+4. **🚚 Supply-Demand Connect**
+* A map-based marketplace connecting retailers with excess stock to potential buyers (e.g., NGOs).
+* Features real-time matching, location visualization, and route generation from source to destination.
+
+
+5. **🌱 Sustainability Analyzer & Leaderboard**
+* Calculates a **Sustainability Score** for products based on carbon footprint and water usage.
+* Gamifies eco-friendly purchasing by ranking users on a leaderboard based on their sustainable choices.
+
+
+
+### **🛠️ Tech Stack**
+
+* **Machine Learning:** Transformers, Reinforcement Learning, Random Forest, Computer Vision.
+* **Data Integration:** Web Scraping, Google Trends API.
+* **Core Focus:** Sustainability, Inventory Optimization, Waste Reduction.
